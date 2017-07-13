@@ -1,0 +1,3 @@
+rootProject.name = 'go_go_dutch'
+
+include ':app'

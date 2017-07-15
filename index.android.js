@@ -7,47 +7,76 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
+  Alert,
+  Button,
+  FlatList,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View
 } from 'react-native';
 
-export default class go_go_dutch extends Component {
+
+export default class GoGoDutch extends Component {
+  constructor() {
+    super();
+
+    store.accountings = [];
+    for (i = 0; i <20; i++) {
+      if (i % 3 == 0) {
+        store.accountings.push({key:i, title: 'German 2015/06/11'});
+      } else if (i % 3 == 1) {
+        store.accountings.push({key:i, title: 'Japan 2017/04/07'});
+      } else {
+        store.accountings.push({key:i, title: 'Taipei 2016/01/13'});
+      }
+    }
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
+      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+        <View style={{flexDirection: 'row', height: 100, borderBottomWidth: 3, borderColor: '#ccc'}}>
+          <Text style={{flex: 1, paddingLeft: 20, fontSize: 55, textAlignVertical: 'center',}}>記帳本</Text>
+          <View style={{margin: 4}}>
+            <Button
+              onPress={() => { Alert.alert('You tapped the button!')}}
+              title="新增帳本"
+            />
+          </View>
+        </View>
+        <FlatList
+          style={{flex: 1}}
+          data={store.accountings}
+          renderItem={
+            ({item}) =>
+              <View style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}>
+                <Text style={[styles.item, {flex: 1}]}>{item.title}</Text>
+                <View style={{margin: 8}}>
+                  <Button
+                    onPress={() => { Alert.alert('You tapped the button!')}}
+                    title="刪除"
+                  />
+                </View>
+              </View>
+          }
+        />
       </View>
     );
   }
 }
 
+store = {
+};
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  item: {
+    fontSize: 24,
+    textAlign: 'left',
+    paddingLeft: 12,
+    paddingTop: 6,
+    paddingBottom: 6,
   },
 });
 
-AppRegistry.registerComponent('go_go_dutch', () => go_go_dutch);
+AppRegistry.registerComponent('go_go_dutch', () => GoGoDutch);

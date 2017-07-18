@@ -16,6 +16,10 @@ import {
 import { StackNavigator } from 'react-navigation';
 import ModalWrapper from 'react-native-modal-wrapper';
 
+
+//---------------------------------------------------------------------
+// Store
+//---------------------------------------------------------------------
 let s_store = null;
 
 // TODO(fcamel): Rewrite it with real data stored in files.
@@ -102,6 +106,9 @@ class DummyStore {
   }
 }
 
+//---------------------------------------------------------------------
+// Main components
+//---------------------------------------------------------------------
 class TripListScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state, setParams} = navigation;
@@ -335,6 +342,9 @@ class MemberListScreen extends Component {
   }
 }
 
+//---------------------------------------------------------------------
+// Helper components
+//---------------------------------------------------------------------
 class TextField extends Component {
   render() {
     const { name, autoFocus, placeholder, defaultValue, updater } = this.props;
@@ -353,6 +363,10 @@ class TextField extends Component {
   }
 }
 
+
+//---------------------------------------------------------------------
+// Styles
+//---------------------------------------------------------------------
 const styles = StyleSheet.create({
   tripItem: {
     fontSize: 18,

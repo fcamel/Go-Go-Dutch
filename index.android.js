@@ -249,13 +249,13 @@ class MemberListScreen extends Component {
             name={'名稱'}
             autoFocus={true}
             placeholder={'阿土伯'}
-            defaultValue={this.state.name ? this.state.name : ''}
+            defaultValue={this.state.name}
             updater={(name) => this.setState({name})}/>
           <TextField
             name={'付費比例 (人數)'}
             autoFocus={false}
             placeholder={''}
-            defaultValue={this.state.ratio ? this.state.ratio.toString() : '1'}
+            defaultValue={this.state.ratio.toString()}
             updater={(ratio) => this.setState({ratio})}/>
           <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
             <Button title="確認" onPress={this.onFinishEditMember} />
@@ -266,7 +266,7 @@ class MemberListScreen extends Component {
           containerStyle={{ flexDirection: 'row', alignItems: 'flex-end' }}
           visible={!!params.deleteMemberVisible}>
           <TouchableOpacity style={{}}
-            onPress={() => { this.onConfirmDeleteMember(params.trip_id, this.state.deleteMemberId ? this.state.deleteMemberId : 0) }}>
+            onPress={() => { this.onConfirmDeleteMember(params.trip_id, this.state.deleteMemberId) }}>
             <Text style={[styles.bottomMenuItem, {backgroundColor: '#f55'}]}>刪除</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{}}
@@ -297,7 +297,11 @@ class MemberListScreen extends Component {
   // Helper methods.
   //--------------------------------------------------------------------
   resetState() {
-    this.state = { ratio: 1 };
+    this.state = {
+      name: '',
+      ratio: 1,
+      deleteMemberId: 0,
+    };
   }
 
   onClickMember = (member_id, name, ratio) => {
@@ -329,7 +333,7 @@ class MemberListScreen extends Component {
   onDeleteMember = (trip_id, member_id) => {
     console.log(`onDeleteMember trip_id=${trip_id} member_id=${member_id}`);
     this.props.navigation.setParams({deleteMemberVisible: true});
-    this.state = {trip_id: trip_id, deleteMemberId: member_id};
+    this.state = {trip_id: trip_id, deleteMemberId: member_id, ratio: this.state.ratio};
   }
 
   onConfirmDeleteMember = (trip_id, member_id) => {

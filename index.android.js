@@ -123,40 +123,6 @@ class TripListScreen extends Component {
     this.state = {text: ''};
   }
 
-  onSubmitNewTrip = () => {
-    var text = this.state.text;
-    console.log('onSubmitNewTrip', text);
-    if (text.length > 0) {
-      this.store.addTrip(text);
-    }
-    this.props.navigation.setParams({newTripVisible: false})
-  }
-
-  onCancelNewTrip = () => {
-    console.log('onCancelNewTrip');
-    this.props.navigation.setParams({newTripVisible: false})
-  }
-
-  onDeleteTrip = (id) => {
-    console.log('onDeleteTrip id=', id);
-    this.props.navigation.setParams({deleteTripId: id})
-  }
-
-  onConfirmDeleteTrip = (id) => {
-    console.log('onConfirmDeleteTrip', id);
-    this.store.deleteTrip(id);
-    this.props.navigation.setParams({deleteTripId: 0})
-  }
-
-  onCancelDeleteTrip = () => {
-    this.props.navigation.setParams({deleteTripId: 0})
-  }
-
-  onClickTrip = (title, id) => {
-    // TODO(fcamel): navigate to ExpenseListScreen if there is any member.
-    this.props.navigation.navigate('Members', {title: title, trip_id: id})
-  }
-
   render() {
     // NOTE: params is undefined in the first call.
     const params = this.props.navigation.state.params ? this.props.navigation.state.params : {};
@@ -210,6 +176,43 @@ class TripListScreen extends Component {
       </View>
     );
   }
+
+  //--------------------------------------------------------------------
+  // Helper methods.
+  //--------------------------------------------------------------------
+  onSubmitNewTrip = () => {
+    var text = this.state.text;
+    console.log('onSubmitNewTrip', text);
+    if (text.length > 0) {
+      this.store.addTrip(text);
+    }
+    this.props.navigation.setParams({newTripVisible: false})
+  }
+
+  onCancelNewTrip = () => {
+    console.log('onCancelNewTrip');
+    this.props.navigation.setParams({newTripVisible: false})
+  }
+
+  onDeleteTrip = (id) => {
+    console.log('onDeleteTrip id=', id);
+    this.props.navigation.setParams({deleteTripId: id})
+  }
+
+  onConfirmDeleteTrip = (id) => {
+    console.log('onConfirmDeleteTrip', id);
+    this.store.deleteTrip(id);
+    this.props.navigation.setParams({deleteTripId: 0})
+  }
+
+  onCancelDeleteTrip = () => {
+    this.props.navigation.setParams({deleteTripId: 0})
+  }
+
+  onClickTrip = (title, id) => {
+    // TODO(fcamel): navigate to ExpenseListScreen if there is any member.
+    this.props.navigation.navigate('Members', {title: title, trip_id: id})
+  }
 }
 
 class MemberListScreen extends Component {
@@ -229,54 +232,6 @@ class MemberListScreen extends Component {
     super();
     this.store = g_store;
     this.resetState();
-  }
-
-  resetState() {
-    this.state = { ratio: 1 };
-  }
-
-  onClickMember = (member_id, name, ratio) => {
-    this.state = {member_id, name, ratio};
-    this.props.navigation.setParams({editMemberVisible: true});
-  }
-
-  onFinishEditMember = () => {
-    console.log('onFiinishEdiMember', this.props.navigation.state, this.state);
-    var { trip_id } = this.props.navigation.state.params;
-    var { member_id, name, ratio } = this.state;
-    ratio = parseInt(ratio);
-    if (name.length > 0 && !isNaN(ratio) && ratio > 0) {
-      if (member_id !== undefined && member_id > 0) {
-        this.store.updateMember(trip_id, member_id, name, ratio);
-      } else {
-        this.store.addMember(trip_id, name, ratio);
-      }
-    }
-    this.resetState();
-    this.props.navigation.setParams({editMemberVisible: false});
-  }
-
-  onCancelEditMember = () => {
-    this.resetState();
-    this.props.navigation.setParams({editMemberVisible: false});
-  }
-
-  onDeleteMember = (trip_id, member_id) => {
-    console.log(`onDeleteMember trip_id=${trip_id} member_id=${member_id}`);
-    this.props.navigation.setParams({deleteMemberVisible: true});
-    this.state = {trip_id: trip_id, deleteMemberId: member_id};
-  }
-
-  onConfirmDeleteMember = (trip_id, member_id) => {
-    console.log(`onConfirmDeleteMember trip_id=${trip_id} member_id=${member_id}`);
-    this.store.deleteMember(trip_id, member_id);
-    this.resetState();
-    this.props.navigation.setParams({deleteMemberVisible: false});
-  }
-
-  onCancelDeleteMember = () => {
-    this.resetState();
-    this.props.navigation.setParams({deleteMemberVisible: false});
   }
 
   render() {
@@ -336,6 +291,57 @@ class MemberListScreen extends Component {
         />
       </View>
     );
+  }
+
+  //--------------------------------------------------------------------
+  // Helper methods.
+  //--------------------------------------------------------------------
+  resetState() {
+    this.state = { ratio: 1 };
+  }
+
+  onClickMember = (member_id, name, ratio) => {
+    this.state = {member_id, name, ratio};
+    this.props.navigation.setParams({editMemberVisible: true});
+  }
+
+  onFinishEditMember = () => {
+    console.log('onFiinishEdiMember', this.props.navigation.state, this.state);
+    var { trip_id } = this.props.navigation.state.params;
+    var { member_id, name, ratio } = this.state;
+    ratio = parseInt(ratio);
+    if (name.length > 0 && !isNaN(ratio) && ratio > 0) {
+      if (member_id !== undefined && member_id > 0) {
+        this.store.updateMember(trip_id, member_id, name, ratio);
+      } else {
+        this.store.addMember(trip_id, name, ratio);
+      }
+    }
+    this.resetState();
+    this.props.navigation.setParams({editMemberVisible: false});
+  }
+
+  onCancelEditMember = () => {
+    this.resetState();
+    this.props.navigation.setParams({editMemberVisible: false});
+  }
+
+  onDeleteMember = (trip_id, member_id) => {
+    console.log(`onDeleteMember trip_id=${trip_id} member_id=${member_id}`);
+    this.props.navigation.setParams({deleteMemberVisible: true});
+    this.state = {trip_id: trip_id, deleteMemberId: member_id};
+  }
+
+  onConfirmDeleteMember = (trip_id, member_id) => {
+    console.log(`onConfirmDeleteMember trip_id=${trip_id} member_id=${member_id}`);
+    this.store.deleteMember(trip_id, member_id);
+    this.resetState();
+    this.props.navigation.setParams({deleteMemberVisible: false});
+  }
+
+  onCancelDeleteMember = () => {
+    this.resetState();
+    this.props.navigation.setParams({deleteMemberVisible: false});
   }
 }
 

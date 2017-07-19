@@ -20,36 +20,31 @@ import ModalWrapper from 'react-native-modal-wrapper';
 //---------------------------------------------------------------------
 // Store
 //---------------------------------------------------------------------
-let s_store = null;
+let g_store = null;
 
 // TODO(fcamel): Rewrite it with real data stored in files.
 // For early development.
 class DummyStore {
   constructor() {
-    if (!s_store) {
-      s_store = this;
-
-      // Fill dumy trips.
-      this.next_trip_id = 1;
-      this.store = {};
-      this.store.trips = [];
-      for (var i = 0; i <20; i++) {
-        if (i % 3 == 0) {
-          this.addTrip('Germany 2015/06/11');
-        } else if (i % 3 == 1) {
-          this.addTrip('Japan 2017/01/07');
-        } else {
-          this.addTrip('Taipei 2016/01/13');
-        }
+    // Fill dumy trips.
+    this.next_trip_id = 1;
+    this.store = {};
+    this.store.trips = [];
+    for (var i = 0; i <20; i++) {
+      if (i % 3 == 0) {
+        this.addTrip('Germany 2015/06/11');
+      } else if (i % 3 == 1) {
+        this.addTrip('Japan 2017/01/07');
+      } else {
+        this.addTrip('Taipei 2016/01/13');
       }
-
-      // Fill dummy members.
-      this.next_member_id = 1;
-      this.addMember(this.store.trips[0].id, '王小明', 1);
-      this.addMember(this.store.trips[0].id, '工藤新一', 2);
-      this.addMember(this.store.trips[0].id, '三眼怪', 3);
     }
-    return s_store;
+
+    // Fill dummy members.
+    this.next_member_id = 1;
+    this.addMember(this.store.trips[0].id, '王小明', 1);
+    this.addMember(this.store.trips[0].id, '工藤新一', 2);
+    this.addMember(this.store.trips[0].id, '三眼怪', 3);
   }
 
   addTrip(name) {
@@ -106,6 +101,8 @@ class DummyStore {
   }
 }
 
+g_store = new DummyStore();
+
 //---------------------------------------------------------------------
 // Main components
 //---------------------------------------------------------------------
@@ -122,7 +119,7 @@ class TripListScreen extends Component {
 
   constructor() {
     super();
-    this.store = new DummyStore();
+    this.store = g_store;
     this.state = {text: ''};
   }
 
@@ -230,7 +227,7 @@ class MemberListScreen extends Component {
 
   constructor() {
     super();
-    this.store = new DummyStore();
+    this.store = g_store;
     this.resetState();
   }
 

@@ -166,7 +166,7 @@ class TripListScreen extends Component {
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
                 onPress={() => this.onClickTrip(item.title, item.id)}>
-                <Text style={[styles.tripItem, {flex: 1}]}>{item.title}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.title}</Text>
                 <View style={{margin: 8}}>
                   <Button title="刪除" onPress={() => {this.onDeleteTrip(item.id)}} />
                 </View>
@@ -282,7 +282,7 @@ class MemberListScreen extends Component {
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
                 onPress={() => this.onClickMember(item.id, item.name, item.ratio)}>
-                <Text style={[styles.tripItem, {flex: 1}]}>{item.name + '(' + item.ratio + ')'}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.name + '(' + item.ratio + ')'}</Text>
                 <View style={{margin: 8}}>
                   <Button title="刪除" onPress={() => {this.onDeleteMember(params.trip_id, item.id)}} />
                 </View>
@@ -375,7 +375,7 @@ class TextField extends Component {
 // Styles
 //---------------------------------------------------------------------
 const styles = StyleSheet.create({
-  tripItem: {
+  tableData: {
     fontSize: 18,
     textAlign: 'left',
     textAlignVertical: 'center',

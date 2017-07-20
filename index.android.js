@@ -42,9 +42,27 @@ class DummyStore {
 
     // Fill dummy members.
     this.next_member_id = 1;
-    this.addMember(this.store.trips[0].id, '王小明', 1);
-    this.addMember(this.store.trips[0].id, '工藤新一', 2);
-    this.addMember(this.store.trips[0].id, '三眼怪', 3);
+    var trip = this.store.trips[0];
+    this.addMember(trip.id, '王小明', 1);
+    this.addMember(trip.id, '工藤新一', 2);
+    this.addMember(trip.id, '三眼怪', 3);
+
+    // Fill dummy expenses.
+    this.next_expense_id = 1;
+    var ms = this.getMembers(trip.id);
+    var members = {};
+    members[ms[0].id] = { paid: 0, should_pay: 2000, };
+    members[ms[1].id] = { paid: 0, should_pay: 1000, };
+    members[ms[2].id] = { paid: 5000, should_pay: 2000, };
+    this.addExpense(trip.id, { name: '飯店', cost: 5000, members, });
+    members = {};
+    members[ms[0].id] = { paid: 2000, should_pay: 1000, };
+    members[ms[2].id] = { paid: 0, should_pay: 1000, };
+    this.addExpense(trip.id, { name: '租車', cost: 2000, members, });
+    members = {};
+    members[ms[1].id] = { paid: 800, should_pay: 500, };
+    members[ms[2].id] = { paid: 200, should_pay: 500, };
+    this.addExpense(trip.id, { name: '午餐', cost: 1000, members, });
   }
 
   addTrip(name) {
@@ -98,6 +116,45 @@ class DummyStore {
       });
     }
     return members;
+  }
+
+  addExpense(trip_id, expense) {
+    this.updateExpense(trip_id, this.next_expense_id++, expense);
+  }
+
+  updateExpense(trip_id, expense_id, expense) {
+    var trip = this.store.trips[trip_id];
+    trip.expenses[expense_id] = expense;
+  }
+
+  deleteExpense(trip_id, expense_id) {
+    var trip = this.store.trips[trip_id];
+    delete trip.expenses[expenser_id];
+  }
+
+  getExpenses(trip_id) {
+    console.log('getExpenses trip_id=' + trip_id, this.store.trips[trip_id].expenses);
+    var all_members = this.getMembers(trip_id);
+    var expenses = [];
+    for (var key in this.store.trips[trip_id].expenses) {
+      var e = this.store.trips[trip_id].expenses[key];
+      var members = [];
+      for (var member_id in all_members) {
+        if (member_id in e.members)
+          members.push(all_members[member_id].name);
+      }
+      members.sort();
+      expenses.push({
+        key: key,
+        id: key,
+        expense: {
+          name: e.name,
+          cost: e.cost,
+          members,
+        }
+      });
+    }
+    return expenses;
   }
 }
 
@@ -211,7 +268,12 @@ class TripListScreen extends Component {
 
   onClickTrip = (title, id) => {
     // TODO(fcamel): navigate to ExpenseListScreen if there is any member.
-    this.props.navigation.navigate('Members', {title: title, trip_id: id})
+    var members = this.store.getMembers(id);
+    if (members && members.length <= 0) {
+      this.props.navigation.navigate('Members', {title: title, trip_id: id})
+    } else {
+      this.props.navigation.navigate('Expenses', {title: title, trip_id: id})
+    }
   }
 }
 
@@ -349,6 +411,66 @@ class MemberListScreen extends Component {
   }
 }
 
+class ExpenseListScreen extends Component {
+  static navigationOptions = ({ navigation }) => {
+    const {state, setParams} = navigation;
+    return {
+      title: state.params.title,
+      headerRight: (
+        <Button title='新增消費' onPress={() => {
+          //setParams({editMemberVisible: true});
+        }}/>
+      ),
+    };
+  };
+
+  constructor() {
+    super();
+    this.store = g_store;
+    //this.resetState();
+  }
+
+  render() {
+    const { params } = this.props.navigation.state;
+
+    // DEBUG
+    console.log('ExpenseListScreen.render: state=', this.props.navigation.state);
+
+    return (
+      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+        <FlatList
+          style={{flex: 1}}
+          data={this.store.getExpenses(params.trip_id)}
+          ListHeaderComponent={
+            () =>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>消費名稱</Text>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>金額</Text>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>拆帳成員</Text>
+            </View>
+          }
+          renderItem={
+            ({item}) =>
+              <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
+                onPress={() => this.onClickExpense(item.id, item.expense)}>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.expense.name}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.expense.cost}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.expense.members.join(',')}</Text>
+              </TouchableOpacity>
+          }
+        />
+      </View>
+    );
+  }
+
+  //--------------------------------------------------------------------
+  // Helper methods.
+  //--------------------------------------------------------------------
+
+  onClickExpense() {
+  }
+}
+
 //---------------------------------------------------------------------
 // Helper components
 //---------------------------------------------------------------------
@@ -375,6 +497,13 @@ class TextField extends Component {
 // Styles
 //---------------------------------------------------------------------
 const styles = StyleSheet.create({
+  tableHeader: {
+    color: '#ccc',
+    backgroundColor: '#333',
+    fontWeight: 'bold',
+    paddingTop: 6,
+    paddingBottom: 6,
+  },
   tableData: {
     fontSize: 18,
     textAlign: 'left',
@@ -396,6 +525,7 @@ const styles = StyleSheet.create({
 const GoGoDutch = StackNavigator({
   Home: { screen: TripListScreen, },
   Members: { screen: MemberListScreen, },
+  Expenses: { screen: ExpenseListScreen, },
 });
 
 AppRegistry.registerComponent('go_go_dutch', () => GoGoDutch);

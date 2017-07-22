@@ -14,20 +14,22 @@ import {
   View,
 } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+
+import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
 import ModalWrapper from 'react-native-modal-wrapper';
 
 
 //---------------------------------------------------------------------
 // Store
 //---------------------------------------------------------------------
-let g_store = null;
+let gStore = null;
 
 // TODO(fcamel): Rewrite it with real data stored in files.
 // For early development.
 class DummyStore {
   constructor() {
     // Fill dumy trips.
-    this.next_trip_id = 1;
+    this.nextTripId = 1;
     this.store = {};
     this.store.trips = [];
     for (var i = 0; i <20; i++) {
@@ -41,39 +43,39 @@ class DummyStore {
     }
 
     // Fill dummy members.
-    this.next_member_id = 1;
+    this.nextMemberId = 1;
     var trip = this.store.trips[0];
     this.addMember(trip.id, '王小明', 1);
     this.addMember(trip.id, '工藤新一', 2);
     this.addMember(trip.id, '三眼怪', 3);
 
     // Fill dummy expenses.
-    this.next_expense_id = 1;
+    this.nextExpenseId = 1;
     var ms = this.getMembers(trip.id);
     var members = {};
-    members[ms[0].id] = { paid: 0, should_pay: 2000, };
-    members[ms[1].id] = { paid: 0, should_pay: 1000, };
-    members[ms[2].id] = { paid: 5000, should_pay: 2000, };
+    members[ms[0].id] = { paid: 0, shouldPay: 2000, };
+    members[ms[1].id] = { paid: 0, shouldPay: 1000, };
+    members[ms[2].id] = { paid: 5000, shouldPay: 2000, };
     this.addExpense(trip.id, { name: '飯店', cost: 5000, members, });
     members = {};
-    members[ms[0].id] = { paid: 2000, should_pay: 1000, };
-    members[ms[2].id] = { paid: 0, should_pay: 1000, };
+    members[ms[0].id] = { paid: 2000, shouldPay: 1000, };
+    members[ms[2].id] = { paid: 0, shouldPay: 1000, };
     this.addExpense(trip.id, { name: '租車', cost: 2000, members, });
     members = {};
-    members[ms[1].id] = { paid: 800, should_pay: 500, };
-    members[ms[2].id] = { paid: 200, should_pay: 500, };
+    members[ms[1].id] = { paid: 800, shouldPay: 500, };
+    members[ms[2].id] = { paid: 200, shouldPay: 500, };
     this.addExpense(trip.id, { name: '午餐', cost: 1000, members, });
   }
 
   addTrip(name) {
     this.store.trips.push({
-      key: this.next_trip_id,
-      id: this.next_trip_id,
+      key: this.nextTripId,
+      id: this.nextTripId,
       title: name,
       members: {},
       expenses: {},
     });
-    this.next_trip_id++;
+    this.nextTripId++;
   }
 
   getTrips() {
@@ -89,25 +91,24 @@ class DummyStore {
     }
   }
 
-  addMember(trip_id, name, ratio) {
-    this.updateMember(trip_id, this.next_member_id++, name, ratio);
+  addMember(tripId, name, ratio) {
+    this.updateMember(tripId, this.nextMemberId++, name, ratio);
   }
 
-  updateMember(trip_id, member_id, name, ratio) {
-    var trip = this.store.trips[trip_id];
-    trip.members[member_id] = { name, ratio };
+  updateMember(tripId, memberId, name, ratio) {
+    var trip = this.store.trips[tripId];
+    trip.members[memberId] = { name, ratio };
   }
 
-  deleteMember(trip_id, member_id) {
-    var trip = this.store.trips[trip_id];
-    delete trip.members[member_id];
+  deleteMember(tripId, memberId) {
+    var trip = this.store.trips[tripId];
+    delete trip.members[memberId];
   }
 
-  getMembers(trip_id) {
-    console.log('getMembers trip_id=' + trip_id, this.store.trips[trip_id].members);
+  getMembers(tripId) {
     var members = [];
-    for (var key in this.store.trips[trip_id].members) {
-      var m = this.store.trips[trip_id].members[key];
+    for (var key in this.store.trips[tripId].members) {
+      var m = this.store.trips[tripId].members[key];
       members.push({
         key: key,
         id: key,
@@ -118,30 +119,29 @@ class DummyStore {
     return members;
   }
 
-  addExpense(trip_id, expense) {
-    this.updateExpense(trip_id, this.next_expense_id++, expense);
+  addExpense(tripId, expense) {
+    this.updateExpense(tripId, this.nextExpenseId++, expense);
   }
 
-  updateExpense(trip_id, expense_id, expense) {
-    var trip = this.store.trips[trip_id];
-    trip.expenses[expense_id] = expense;
+  updateExpense(tripId, expenseId, expense) {
+    var trip = this.store.trips[tripId];
+    trip.expenses[expenseId] = expense;
   }
 
-  deleteExpense(trip_id, expense_id) {
-    var trip = this.store.trips[trip_id];
-    delete trip.expenses[expenser_id];
+  deleteExpense(tripId, expenseId) {
+    var trip = this.store.trips[tripId];
+    delete trip.expenses[expenseId];
   }
 
-  getExpenses(trip_id) {
-    console.log('getExpenses trip_id=' + trip_id, this.store.trips[trip_id].expenses);
-    var all_members = this.getMembers(trip_id);
+  getExpenses(tripId) {
+    var all = this.getMembers(tripId);
     var expenses = [];
-    for (var key in this.store.trips[trip_id].expenses) {
-      var e = this.store.trips[trip_id].expenses[key];
+    for (var key in this.store.trips[tripId].expenses) {
+      var e = this.store.trips[tripId].expenses[key];
       var members = [];
-      for (var member_id in all_members) {
-        if (member_id in e.members)
-          members.push(all_members[member_id].name);
+      for (var memberId in all) {
+        if (memberId in e.members)
+          members.push(all[memberId].name);
       }
       members.sort();
       expenses.push({
@@ -158,7 +158,8 @@ class DummyStore {
   }
 }
 
-g_store = new DummyStore();
+
+gStore = new DummyStore();
 
 //---------------------------------------------------------------------
 // Main components
@@ -176,7 +177,7 @@ class TripListScreen extends Component {
 
   constructor() {
     super();
-    this.store = g_store;
+    this.store = gStore;
     this.state = {text: ''};
   }
 
@@ -184,9 +185,6 @@ class TripListScreen extends Component {
     // NOTE: params is undefined in the first call.
     const params = this.props.navigation.state.params ? this.props.navigation.state.params : {};
     const { navigate } = this.props.navigation;
-
-    // DEBUG
-    console.log('render: state=', this.props.navigation.state, params);
 
     return (
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
@@ -239,7 +237,6 @@ class TripListScreen extends Component {
   //--------------------------------------------------------------------
   onSubmitNewTrip = () => {
     var text = this.state.text;
-    console.log('onSubmitNewTrip', text);
     if (text.length > 0) {
       this.store.addTrip(text);
     }
@@ -247,17 +244,14 @@ class TripListScreen extends Component {
   }
 
   onCancelNewTrip = () => {
-    console.log('onCancelNewTrip');
     this.props.navigation.setParams({newTripVisible: false})
   }
 
   onDeleteTrip = (id) => {
-    console.log('onDeleteTrip id=', id);
     this.props.navigation.setParams({deleteTripId: id})
   }
 
   onConfirmDeleteTrip = (id) => {
-    console.log('onConfirmDeleteTrip', id);
     this.store.deleteTrip(id);
     this.props.navigation.setParams({deleteTripId: 0})
   }
@@ -267,46 +261,153 @@ class TripListScreen extends Component {
   }
 
   onClickTrip = (title, id) => {
-    // TODO(fcamel): navigate to ExpenseListScreen if there is any member.
     var members = this.store.getMembers(id);
-    if (members && members.length <= 0) {
-      this.props.navigation.navigate('Members', {title: title, trip_id: id})
-    } else {
-      this.props.navigation.navigate('Expenses', {title: title, trip_id: id})
-    }
+    var activeTab = (!members || members.length <= 0)
+        ? TripContentMainView.Tabs.Members
+        : TripContentMainView.Tabs.Expenses;
+    this.props.navigation.navigate('Trip', {title, tripId: id, activeTab})
   }
 }
 
-class MemberListScreen extends Component {
+class TripContentScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state, setParams} = navigation;
-    return {
-      title: state.params.title,
-      headerRight: (
-        <Button title='新增成員' onPress={() => {
-          setParams({editMemberVisible: true});
-        }}/>
-      ),
-    };
+    if (state.params.activeTab === TripContentMainView.Tabs.Members) {
+      return {
+        title: state.params.title,
+        headerRight: (
+          <Button title='新增成員' onPress={() => {
+            setParams({editorVisible: true});
+          }}/>
+        ),
+      };
+    } else if (state.params.activeTab === TripContentMainView.Tabs.Expenses) {
+      return {
+        title: state.params.title,
+        headerRight: (
+          <Button title='新增消費' onPress={() => {
+            setParams({editorVisible: true});
+          }}/>
+        ),
+      };
+    } else {
+      // TODO
+      return {
+        title: state.params.title,
+      };
+    }
   };
 
   constructor() {
     super();
-    this.store = g_store;
+    this.store = gStore;
     this.resetState();
   }
 
   render() {
     const { params } = this.props.navigation.state;
+    const { navigate } = this.props.navigation;
 
-    // DEBUG
-    console.log('MemberListScreen.render: state=', this.props.navigation.state, 'params=', params);
+    // params.editorVisible may be undefined.
+    var editorVisible = !!params.editorVisible;
+    var showEditor = (visible) => {
+      this.props.navigation.setParams({editorVisible: visible});
+    };
 
+    return (
+      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+        <TripContentMainView
+          store={this.store}
+          tripId={params.tripId}
+          activeTab={params.activeTab}
+          showEditor={showEditor}
+          editorVisible={editorVisible} />
+        <BottomNavigation
+          activeTab={params.activeTab}
+          labelColor="white"
+          rippleColor="white"
+          style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
+          onTabChange={(newTabIndex) => {
+            if (newTabIndex === 0) {
+              this.props.navigation.setParams({activeTab: TripContentMainView.Tabs.Members});
+            } else if (newTabIndex === 1) {
+              this.props.navigation.setParams({activeTab: TripContentMainView.Tabs.Expenses});
+            } else {
+              this.props.navigation.setParams({activeTab: TripContentMainView.Tabs.Summary});
+            }
+          }}
+        >
+          <Tab
+            label="成員"
+            barBackgroundColor="#37474F"
+          />
+          <Tab
+            label="消費記錄"
+            barBackgroundColor="#37474F"
+          />
+          <Tab
+            label="結算"
+            barBackgroundColor="#37474F"
+          />
+        </BottomNavigation>
+      </View>
+    );
+  }
+
+  //--------------------------------------------------------------------
+  // Helper methods.
+  //--------------------------------------------------------------------
+  resetState() {
+    this.state = {};
+  }
+}
+
+class TripContentMainView extends Component {
+  // The value is the tab index.
+  static Tabs = {
+    Members: 0,
+    Expenses: 1,
+    Summary: 2,
+  };
+
+  render() {
+    if (this.props.activeTab === TripContentMainView.Tabs.Members) {
+      return (
+        <MembersView
+          store={this.props.store}
+          tripId={this.props.tripId}
+          showEditor={this.props.showEditor}
+          editorVisible={this.props.editorVisible} />
+      );
+    } else if (this.props.activeTab === TripContentMainView.Tabs.Expenses) {
+      return (
+        <ExpensesView
+          store={this.props.store}
+          tripId={this.props.tripId}
+          showEditor={this.props.showEditor}
+          editorVisible={this.props.editorVisible} />
+      );
+    } else {
+      // TODO
+      return (
+        <View />
+      );
+    }
+  }
+}
+
+class MembersView extends Component {
+  constructor() {
+    super();
+    this.state = this.getInitialState();
+  }
+
+  render() {
     return (
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
         <ModalWrapper
           style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
-          visible={!!params.editMemberVisible}>
+          visible={this.props.editorVisible}>
           <TextField
             name={'名稱'}
             autoFocus={true}
@@ -326,9 +427,9 @@ class MemberListScreen extends Component {
         </ModalWrapper>
         <ModalWrapper
           containerStyle={{ flexDirection: 'row', alignItems: 'flex-end' }}
-          visible={!!params.deleteMemberVisible}>
+          visible={this.state.deleteMemberId > 0}>
           <TouchableOpacity style={{}}
-            onPress={() => { this.onConfirmDeleteMember(params.trip_id, this.state.deleteMemberId) }}>
+            onPress={() => { this.onConfirmDeleteMember() }}>
             <Text style={[styles.bottomMenuItem, {backgroundColor: '#f55'}]}>刪除</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{}}
@@ -339,14 +440,14 @@ class MemberListScreen extends Component {
 
         <FlatList
           style={{flex: 1}}
-          data={this.store.getMembers(params.trip_id)}
+          data={this.props.store.getMembers(this.props.tripId)}
           renderItem={
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
                 onPress={() => this.onClickMember(item.id, item.name, item.ratio)}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name + '(' + item.ratio + ')'}</Text>
                 <View style={{margin: 8}}>
-                  <Button title="刪除" onPress={() => {this.onDeleteMember(params.trip_id, item.id)}} />
+                  <Button title="刪除" onPress={() => {this.onDeleteMember(item.id)}} />
                 </View>
               </TouchableOpacity>
           }
@@ -358,89 +459,71 @@ class MemberListScreen extends Component {
   //--------------------------------------------------------------------
   // Helper methods.
   //--------------------------------------------------------------------
+  getInitialState() {
+    return { memberId: -1, name: '', ratio: 1, deleteMemberId: 0, }
+  }
   resetState() {
-    this.state = {
-      name: '',
-      ratio: 1,
-      deleteMemberId: 0,
-    };
+    this.setState(() => { return this.getInitialState(); });
   }
 
-  onClickMember = (member_id, name, ratio) => {
-    this.state = {member_id, name, ratio};
-    this.props.navigation.setParams({editMemberVisible: true});
+  onClickMember = (memberId, name, ratio) => {
+    this.setState(() => {
+      return {
+        memberId, name, ratio, deleteMemberId: 0,
+      }
+    });
+    this.props.showEditor(true);
   }
 
   onFinishEditMember = () => {
-    console.log('onFiinishEdiMember', this.props.navigation.state, this.state);
-    var { trip_id } = this.props.navigation.state.params;
-    var { member_id, name, ratio } = this.state;
+    var { tripId } = this.props;
+    var { memberId, name, ratio } = this.state;
     ratio = parseInt(ratio);
     if (name.length > 0 && !isNaN(ratio) && ratio > 0) {
-      if (member_id !== undefined && member_id > 0) {
-        this.store.updateMember(trip_id, member_id, name, ratio);
+      if (memberId !== undefined && memberId > 0) {
+        this.props.store.updateMember(tripId, memberId, name, ratio);
       } else {
-        this.store.addMember(trip_id, name, ratio);
+        this.props.store.addMember(tripId, name, ratio);
       }
     }
     this.resetState();
-    this.props.navigation.setParams({editMemberVisible: false});
+    this.props.showEditor(false);
   }
 
   onCancelEditMember = () => {
     this.resetState();
-    this.props.navigation.setParams({editMemberVisible: false});
+    this.props.showEditor(false);
   }
 
-  onDeleteMember = (trip_id, member_id) => {
-    console.log(`onDeleteMember trip_id=${trip_id} member_id=${member_id}`);
-    this.props.navigation.setParams({deleteMemberVisible: true});
-    this.state = {trip_id: trip_id, deleteMemberId: member_id, ratio: this.state.ratio};
+  onDeleteMember = (memberId) => {
+    this.setState((previous) => {
+      previous.deleteMemberId = memberId;
+      return previous;
+    });
   }
 
-  onConfirmDeleteMember = (trip_id, member_id) => {
-    console.log(`onConfirmDeleteMember trip_id=${trip_id} member_id=${member_id}`);
-    this.store.deleteMember(trip_id, member_id);
+  onConfirmDeleteMember = () => {
+    this.props.store.deleteMember(this.props.tripId, this.state.deleteMemberId);
     this.resetState();
-    this.props.navigation.setParams({deleteMemberVisible: false});
   }
 
   onCancelDeleteMember = () => {
     this.resetState();
-    this.props.navigation.setParams({deleteMemberVisible: false});
   }
 }
 
-class ExpenseListScreen extends Component {
-  static navigationOptions = ({ navigation }) => {
-    const {state, setParams} = navigation;
-    return {
-      title: state.params.title,
-      headerRight: (
-        <Button title='新增消費' onPress={() => {
-          //setParams({editMemberVisible: true});
-        }}/>
-      ),
-    };
-  };
-
+class ExpensesView extends Component {
   constructor() {
     super();
-    this.store = g_store;
-    //this.resetState();
+    this.resetState();
   }
 
   render() {
-    const { params } = this.props.navigation.state;
-
-    // DEBUG
-    console.log('ExpenseListScreen.render: state=', this.props.navigation.state);
-
     return (
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
         <FlatList
           style={{flex: 1}}
-          data={this.store.getExpenses(params.trip_id)}
+          data={this.props.store.getExpenses(this.props.tripId)}
           ListHeaderComponent={
             () =>
             <View style={{flexDirection: 'row'}}>
@@ -466,6 +549,10 @@ class ExpenseListScreen extends Component {
   //--------------------------------------------------------------------
   // Helper methods.
   //--------------------------------------------------------------------
+
+  resetState() {
+    this.state = {};
+  }
 
   onClickExpense() {
   }
@@ -524,8 +611,7 @@ const styles = StyleSheet.create({
 
 const GoGoDutch = StackNavigator({
   Home: { screen: TripListScreen, },
-  Members: { screen: MemberListScreen, },
-  Expenses: { screen: ExpenseListScreen, },
+  Trip: { screen: TripContentScreen, },
 });
 
 AppRegistry.registerComponent('go_go_dutch', () => GoGoDutch);

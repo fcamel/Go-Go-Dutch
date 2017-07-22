@@ -138,14 +138,14 @@ class DummyStore {
   }
 
   getExpenses(tripId) {
-    var all = this.getMembers(tripId);
+    var allMembers = this.getMembers(tripId);
     var expenses = [];
     for (var key in this.store.trips[tripId].expenses) {
       var e = this.store.trips[tripId].expenses[key];
       var members = [];
-      for (var memberId in all) {
+      for (var memberId in allMembers) {
         if (memberId in e.members)
-          members.push(all[memberId].name);
+          members.push(allMembers[memberId].name);
       }
       members.sort();
       expenses.push({
@@ -159,6 +159,30 @@ class DummyStore {
       });
     }
     return expenses;
+  }
+
+  getSummary(tripId) {
+    var members = this.getMembers(tripId);
+    var summary = {};
+    for (var i = 0; i < members.length; i++) {
+      var m = members[i];
+      summary[m.id] = { key: m.id, member_id: m.id, name: m.name, paid: 0, shouldPay: 0 };
+    }
+
+    for (var key in this.store.trips[tripId].expenses) {
+      var e = this.store.trips[tripId].expenses[key];
+      for (var member_id in e.members) {
+        summary[member_id].paid += e.members[member_id].paid;
+        summary[member_id].shouldPay += e.members[member_id].shouldPay;
+      }
+    }
+
+    var results = [];
+    for (var m in summary) {
+      results.push(summary[m]);
+    }
+    results.sort();
+    return results;
   }
 }
 
@@ -401,9 +425,10 @@ class TripContentMainView extends Component {
           editorVisible={this.props.editorVisible} />
       );
     } else {
-      // TODO
       return (
-        <View />
+        <SummaryView
+          store={this.props.store}
+          tripId={this.props.tripId} />
       );
     }
   }
@@ -568,6 +593,41 @@ class ExpensesView extends Component {
   }
 
   onClickExpense() {
+  }
+}
+
+class SummaryView extends Component {
+  constructor() {
+    super();
+  }
+
+  render() {
+    return (
+      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+        <FlatList
+          style={{flex: 1}}
+          data={this.props.store.getSummary(this.props.tripId)}
+          ListHeaderComponent={
+            () =>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>成員</Text>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>應付</Text>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>已付</Text>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>差額</Text>
+            </View>
+          }
+          renderItem={
+            ({item}) =>
+              <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.shouldPay}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.paid}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.paid - item.shouldPay}</Text>
+              </TouchableOpacity>
+          }
+        />
+      </View>
+    );
   }
 }
 

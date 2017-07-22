@@ -40,6 +40,7 @@ export default class MembersView extends Component {
             autoFocus={false}
             placeholder={''}
             defaultValue={this.state.ratio.toString()}
+            keyboardType={'numeric'}
             updater={(ratio) => this.setState({ratio})}/>
           <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
             <Button title="確認" onPress={this.onFinishEditMember} />

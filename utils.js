@@ -4,7 +4,10 @@ import { View, Text, TextInput } from 'react-native';
 
 class TextField extends Component {
   render() {
-    const { name, autoFocus, placeholder, defaultValue, updater } = this.props;
+    const {
+        name, autoFocus, placeholder, defaultValue, updater,
+        keyboardType='default', returnKeyType='done',
+    } = this.props;
 
     return (
       <View style={{flexDirection: 'row'}}>
@@ -14,6 +17,7 @@ class TextField extends Component {
           autoFocus={autoFocus}
           placeholder={placeholder}
           defaultValue={defaultValue}
+          keyboardType={keyboardType}
           onChangeText={updater} />
       </View>
     );

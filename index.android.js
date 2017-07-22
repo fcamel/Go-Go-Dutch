@@ -646,7 +646,9 @@ class ExpensesView extends Component {
       expenseId,
       expenseDetails,
       deleteExpenseButtonVisible: true,
-      dataUpdater: () => { this.setState({dataUpdateDetector: {}}) }
+      editorVisible: false,
+      deleteExpenseId: -1,
+      notifyDataUpdated: () => { this.setState({dataUpdateDetector: {}}) }
     });
   }
 }
@@ -670,13 +672,11 @@ class ExpenseDetailScreen extends Component {
         headerRight: (
           <View style={{width: 100, flexDirection: 'row', justifyContent: 'space-around'}}>
             <Button title='刪除' onPress={() => {
-              params.store.deleteExpense(params.tripId, params.expenseId);
-              params.dataUpdater();
-              navigation.goBack();
+              setParams({deleteExpenseId: params.expenseId});
             }} />
             <Button title='完成' onPress={() => {
               // TODO
-              params.dataUpdater();
+              params.notifyDataUpdated();
               navigation.goBack();
             }}/>
           </View>
@@ -688,7 +688,7 @@ class ExpenseDetailScreen extends Component {
         headerRight: (
           <Button title='完成' onPress={() => {
             // TODO
-            params.dataUpdater();
+            params.notifyDataUpdated();
             navigation.goBack();
           }}/>
         ),
@@ -701,6 +701,27 @@ class ExpenseDetailScreen extends Component {
 
     return (
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+        <ModalWrapper
+          style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
+          visible={params.editorVisible}>
+        </ModalWrapper>
+        <ModalWrapper
+          containerStyle={{ flexDirection: 'row', alignItems: 'flex-end' }}
+          visible={params.deleteExpenseId > 0}>
+          <TouchableOpacity style={{}}
+            onPress={() => this.onRespondDeleteExpense(true)}>
+            <Text style={[styles.bottomMenuItem, {backgroundColor: '#f55'}]}>刪除</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{}}
+            onPress={() => this.onRespondDeleteExpense(false)}>
+            <Text style={styles.bottomMenuItem}>取消</Text>
+          </TouchableOpacity>
+        </ModalWrapper>
+
+        <View style={{paddingLeft: 10, paddingTop: 15, paddingBottom: 15}}>
+          <Text style={{paddingBottom: 10, fontSize: 30, fontWeight: 'bold', color: '#77c'}}>消費明細</Text>
+          <Text style={{fontSize: 12, color: '#777'}}>＊可點擊單列編輯金額</Text>
+        </View>
         <FlatList
           style={{flex: 1}}
           data={params.expenseDetails}
@@ -716,7 +737,7 @@ class ExpenseDetailScreen extends Component {
           renderItem={
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
-                onPress={() => this.onClickExpenseDetail(params.tripId, item.expenseId, item.name, item.shouldPay, item.paid,)}>
+                onPress={() => this.onClickExpenseMember(params.tripId, item.expenseId, item.name, item.shouldPay, item.paid,)}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.shouldPay}</Text>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.paid}</Text>
@@ -732,8 +753,20 @@ class ExpenseDetailScreen extends Component {
   // Helper methods.
   //--------------------------------------------------------------------
 
-  onClickExpenseDetail(tripId, expenseId, name, shouldPay, paid) {
+  onClickExpenseMember(tripId, expenseId, name, shouldPay, paid) {
     // TODO
+  }
+
+  onRespondDeleteExpense(confirmed) {
+    const { setParams, goBack } = this.props.navigation;
+    const { params } = this.props.navigation.state;
+
+    setParams({deleteExpenseId: -1});
+    if (confirmed) {
+      params.store.deleteExpense(params.tripId, params.deleteExpenseId);
+      params.notifyDataUpdated();
+      goBack();
+    }
   }
 }
 

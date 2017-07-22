@@ -462,6 +462,11 @@ class ExpenseDetailScreen extends Component {
   }
 
   onEditingDone = () => {
+    if (this.state.warningShouldPayVisible || this.state.warningPaidVisible) {
+      alert('請先修正不一致的數字');
+      return;
+    }
+
     const { goBack } = this.props.navigation;
     const { params } = this.props.navigation.state;
 
@@ -483,6 +488,8 @@ class ExpenseDetailScreen extends Component {
     } else {
       // New data.
       // TODO
+      params.notifyDataUpdated();
+      goBack();
     }
   }
 

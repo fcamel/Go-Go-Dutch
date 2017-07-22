@@ -1,4 +1,4 @@
-package com.go_go_dutch;
+package com.gogodutch;
 
 import android.app.Application;
 

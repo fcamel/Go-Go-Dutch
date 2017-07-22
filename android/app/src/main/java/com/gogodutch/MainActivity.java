@@ -1,4 +1,4 @@
-package com.go_go_dutch;
+package com.gogodutch;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "go_go_dutch";
+        return "GoGoDutch";
     }
 }

@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "go_go_dutch.app"
-               BlueprintName = "go_go_dutch"
-               ReferencedContainer = "container:go_go_dutch.xcodeproj">
+               BuildableName = "GoGoDutch.app"
+               BlueprintName = "GoGoDutch"
+               ReferencedContainer = "container:GoGoDutch.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "go_go_dutchTests.xctest"
-               BlueprintName = "go_go_dutchTests"
-               ReferencedContainer = "container:go_go_dutch.xcodeproj">
+               BuildableName = "GoGoDutchTests.xctest"
+               BlueprintName = "GoGoDutchTests"
+               ReferencedContainer = "container:GoGoDutch.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -61,9 +61,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "go_go_dutchTests.xctest"
-               BlueprintName = "go_go_dutchTests"
-               ReferencedContainer = "container:go_go_dutch.xcodeproj">
+               BuildableName = "GoGoDutchTests.xctest"
+               BlueprintName = "GoGoDutchTests"
+               ReferencedContainer = "container:GoGoDutch.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,9 +71,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "go_go_dutch.app"
-            BlueprintName = "go_go_dutch"
-            ReferencedContainer = "container:go_go_dutch.xcodeproj">
+            BuildableName = "GoGoDutch.app"
+            BlueprintName = "GoGoDutch"
+            ReferencedContainer = "container:GoGoDutch.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -94,9 +94,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "go_go_dutch.app"
-            BlueprintName = "go_go_dutch"
-            ReferencedContainer = "container:go_go_dutch.xcodeproj">
+            BuildableName = "GoGoDutch.app"
+            BlueprintName = "GoGoDutch"
+            ReferencedContainer = "container:GoGoDutch.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -113,9 +113,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "go_go_dutch.app"
-            BlueprintName = "go_go_dutch"
-            ReferencedContainer = "container:go_go_dutch.xcodeproj">
+            BuildableName = "GoGoDutch.app"
+            BlueprintName = "GoGoDutch"
+            ReferencedContainer = "container:GoGoDutch.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -112,6 +112,7 @@ class DummyStore {
   getMembers(tripId) {
     var members = [];
     for (var key in this.store.trips[tripId].members) {
+      key = parseInt(key);
       var m = this.store.trips[tripId].members[key];
       members.push({
         key: key,
@@ -141,6 +142,7 @@ class DummyStore {
     var allMembers = this.getMembers(tripId);
     var expenses = [];
     for (var key in this.store.trips[tripId].expenses) {
+      key = parseInt(key);
       var e = this.store.trips[tripId].expenses[key];
       var members = [];
       for (var memberId in allMembers) {
@@ -170,6 +172,7 @@ class DummyStore {
     }
 
     for (var key in this.store.trips[tripId].expenses) {
+      key = parseInt(key);
       var e = this.store.trips[tripId].expenses[key];
       for (var member_id in e.members) {
         summary[member_id].paid += e.members[member_id].paid;
@@ -212,7 +215,6 @@ class TripListScreen extends Component {
   render() {
     // NOTE: params is undefined in the first call.
     const params = this.props.navigation.state.params ? this.props.navigation.state.params : {};
-    const { navigate } = this.props.navigation;
 
     return (
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
@@ -271,7 +273,6 @@ class TripListScreen extends Component {
   }
 
   onFinishEditTrip(done) {
-    console.log('onFinishEditTrip', this.state);
     if (done && this.state.name.length > 0) {
       if (this.state.id > 0) {
         this.store.updateTrip(this.state.id, this.state.name);
@@ -343,7 +344,6 @@ class TripContentScreen extends Component {
 
   render() {
     const { params } = this.props.navigation.state;
-    const { navigate } = this.props.navigation;
 
     // params.editorVisible may be undefined.
     var editorVisible = !!params.editorVisible;
@@ -355,6 +355,7 @@ class TripContentScreen extends Component {
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
         <TripContentMainView
           store={this.store}
+          navigation={this.props.navigation}
           tripId={params.tripId}
           activeTab={params.activeTab}
           showEditor={showEditor}
@@ -412,6 +413,7 @@ class TripContentMainView extends Component {
       return (
         <MembersView
           store={this.props.store}
+          navigation={this.props.navigation}
           tripId={this.props.tripId}
           showEditor={this.props.showEditor}
           editorVisible={this.props.editorVisible} />
@@ -420,6 +422,7 @@ class TripContentMainView extends Component {
       return (
         <ExpensesView
           store={this.props.store}
+          navigation={this.props.navigation}
           tripId={this.props.tripId}
           showEditor={this.props.showEditor}
           editorVisible={this.props.editorVisible} />
@@ -553,7 +556,7 @@ class MembersView extends Component {
 class ExpensesView extends Component {
   constructor() {
     super();
-    this.resetState();
+    this.state = this.getInitialState();
   }
 
   render() {
@@ -562,6 +565,7 @@ class ExpensesView extends Component {
         <FlatList
           style={{flex: 1}}
           data={this.props.store.getExpenses(this.props.tripId)}
+          extraData={this.state.dataUpdateDetector}
           ListHeaderComponent={
             () =>
             <View style={{flexDirection: 'row'}}>
@@ -588,19 +592,69 @@ class ExpensesView extends Component {
   // Helper methods.
   //--------------------------------------------------------------------
 
+  getInitialState() {
+    return {
+      dataUpdateDetector: {},
+    }
+  }
   resetState() {
-    this.state = {};
+    this.setState(() => getInitialState());
   }
 
-  onClickExpense() {
+  onClickExpense(expenseId, expense) {
+    // Format of expense:
+    // {
+    //   name: '...',
+    //   cost: 0,
+    //   members: {
+    //     member_id: { paid: 0, shouldPay: 0 },
+    //   }
+    // }
+    this.props.navigation.navigate('EditExpense', {
+      store: this.props.store,
+      tripId: this.props.tripId,
+      expenseId,
+      expense,
+      deleteExpenseButtonVisible: true,
+      dataUpdater: () => { this.setState({dataUpdateDetector: {}}) }
+    });
+  }
+}
+
+class EditExpenseScreen extends Component {
+  static navigationOptions = ({ navigation }) => {
+    const { setParams } = navigation;
+    const { params } = navigation.state;
+    if (params.deleteExpenseButtonVisible) {
+      return {
+        headerRight: (
+          <View style={{width: 100, flexDirection: 'row', justifyContent: 'space-around'}}>
+            <Button title='刪除' onPress={() => {
+              params.store.deleteExpense(params.tripId, params.expenseId);
+              params.dataUpdater();
+              navigation.goBack();
+            }} />
+            <Button title='完成' />
+          </View>
+        ),
+      };
+    } else {
+      return {
+        headerRight: (
+          <Button title='完成' onPress={() => setParams({editTripVisible: true})} />
+        ),
+      };
+    }
+  };
+
+  render() {
+    return (
+      <View/>
+    );
   }
 }
 
 class SummaryView extends Component {
-  constructor() {
-    super();
-  }
-
   render() {
     return (
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
@@ -685,6 +739,9 @@ const styles = StyleSheet.create({
 const GoGoDutch = StackNavigator({
   Home: { screen: TripListScreen, },
   Trip: { screen: TripContentScreen, },
+  // TODO: AddExpense
+  // TODO: AddExpense2
+  EditExpense: { screen: EditExpenseScreen, },
 });
 
 AppRegistry.registerComponent('go_go_dutch', () => GoGoDutch);

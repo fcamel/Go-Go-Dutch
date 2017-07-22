@@ -32,15 +32,10 @@ class DummyStore {
     this.nextTripId = 1;
     this.store = {};
     this.store.trips = [];
-    for (var i = 0; i <20; i++) {
-      if (i % 3 == 0) {
-        this.addTrip('Germany 2015/06/11');
-      } else if (i % 3 == 1) {
-        this.addTrip('Japan 2017/01/07');
-      } else {
-        this.addTrip('Taipei 2016/01/13');
-      }
-    }
+    this.addTrip('Germany 2015/06/11');
+    this.addTrip('Japan 2017/01/07');
+    this.addTrip('Taipei 2016/01/13');
+    this.addTrip('Taipei 2017/07/28');
 
     // Fill dummy members.
     this.nextMemberId = 1;
@@ -71,11 +66,20 @@ class DummyStore {
     this.store.trips.push({
       key: this.nextTripId,
       id: this.nextTripId,
-      title: name,
+      name,
       members: {},
       expenses: {},
     });
     this.nextTripId++;
+  }
+
+  updateTrip(id, name) {
+    for (var i = 0; i < this.store.trips.length; i++) {
+      if (this.store.trips[i].id === id) {
+        this.store.trips[i].name = name;
+        break;
+      }
+    }
   }
 
   getTrips() {
@@ -170,7 +174,7 @@ class TripListScreen extends Component {
     return {
       title: '記帳本',
       headerRight: (
-        <Button title='新增帳本' onPress={() => setParams({newTripVisible: true})} />
+        <Button title='新增帳本' onPress={() => setParams({editTripVisible: true})} />
       ),
     };
   };
@@ -178,7 +182,7 @@ class TripListScreen extends Component {
   constructor() {
     super();
     this.store = gStore;
-    this.state = {text: ''};
+    this.state = { id: -1, name: '' };
   }
 
   render() {
@@ -190,15 +194,16 @@ class TripListScreen extends Component {
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
         <ModalWrapper
           style={{ width: 280, height: 180, paddingLeft: 24, paddingRight: 24 }}
-          visible={!!params.newTripVisible}>
+          visible={!!params.editTripVisible}>
           <Text>出遊名稱</Text>
           <TextInput
             autoFocus={true}
+            defaultValue={this.state.name}
             placeholder='阿里山 2017/01'
-            onChangeText={(text) => this.setState({text})}/>
+            onChangeText={(name) => this.setState({name})}/>
           <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-            <Button title="確認" onPress={this.onSubmitNewTrip} />
-            <Button title="取消" onPress={this.onCancelNewTrip} />
+            <Button title="確認" onPress={() => this.onFinishEditTrip(true)} />
+            <Button title="取消" onPress={() => this.onFinishEditTrip(false)} />
           </View>
         </ModalWrapper>
         <ModalWrapper
@@ -220,9 +225,10 @@ class TripListScreen extends Component {
           renderItem={
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
-                onPress={() => this.onClickTrip(item.title, item.id)}>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.title}</Text>
-                <View style={{margin: 8}}>
+                onPress={() => this.onClickTrip(item.id, item.name)}>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
+                <View style={{margin: 8, flexDirection: 'row', width: 100, justifyContent: 'space-around'}}>
+                  <Button title="編輯" onPress={() => {this.onEditTrip(item.id, item.name)}} />
                   <Button title="刪除" onPress={() => {this.onDeleteTrip(item.id)}} />
                 </View>
               </TouchableOpacity>
@@ -235,16 +241,23 @@ class TripListScreen extends Component {
   //--------------------------------------------------------------------
   // Helper methods.
   //--------------------------------------------------------------------
-  onSubmitNewTrip = () => {
-    var text = this.state.text;
-    if (text.length > 0) {
-      this.store.addTrip(text);
-    }
-    this.props.navigation.setParams({newTripVisible: false})
+  onEditTrip(id, name) {
+    this.setState({id, name});
+    this.props.navigation.setParams({editTripVisible: true})
   }
 
-  onCancelNewTrip = () => {
-    this.props.navigation.setParams({newTripVisible: false})
+  onFinishEditTrip(done) {
+    console.log('onFinishEditTrip', this.state);
+    if (done && this.state.name.length > 0) {
+      if (this.state.id > 0) {
+        this.store.updateTrip(this.state.id, this.state.name);
+      } else {
+        this.store.addTrip(this.state.name);
+      }
+    }
+
+    this.props.navigation.setParams({editTripVisible: false})
+    this.setState({id: -1, name: ''});
   }
 
   onDeleteTrip = (id) => {
@@ -260,12 +273,12 @@ class TripListScreen extends Component {
     this.props.navigation.setParams({deleteTripId: 0})
   }
 
-  onClickTrip = (title, id) => {
+  onClickTrip = (id, name) => {
     var members = this.store.getMembers(id);
     var activeTab = (!members || members.length <= 0)
         ? TripContentMainView.Tabs.Members
         : TripContentMainView.Tabs.Expenses;
-    this.props.navigation.navigate('Trip', {title, tripId: id, activeTab})
+    this.props.navigation.navigate('Trip', {title: name, tripId: id, activeTab})
   }
 }
 

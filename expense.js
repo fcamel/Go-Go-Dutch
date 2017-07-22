@@ -13,7 +13,7 @@ import {
 import ModalWrapper from 'react-native-modal-wrapper';
 
 import styles from './styles';
-import { DeleteConfirmDialog } from './utils';
+import { TextField, DeleteConfirmDialog } from './utils';
 
 
 export default class ExpensesView extends Component {
@@ -98,7 +98,8 @@ export default class ExpensesView extends Component {
     this.props.navigation.navigate('ExpenseDetail', {
       store: this.props.store,
       tripId: this.props.tripId,
-      title: `${name} ($${cost})`,
+      name,
+      cost,
       expenseId,
       expenseDetails,
       deleteExpenseButtonVisible: true,
@@ -124,7 +125,7 @@ class ExpenseDetailScreen extends Component {
     const { params } = navigation.state;
     if (params.deleteExpenseButtonVisible) {
       return {
-        title: params.title,
+        title: `${params.name} ($${params.cost})`,
         headerRight: (
           <View style={{width: 100, flexDirection: 'row', justifyContent: 'space-around'}}>
             <Button title='刪除' onPress={() => {
@@ -152,9 +153,21 @@ class ExpenseDetailScreen extends Component {
     }
   };
 
+  constructor() {
+    super();
+
+    this.state = this.getInitialState();
+  }
+
   componentWillMount() {
     const { setParams } = this.props.navigation;
+    const { params } = this.props.navigation.state;
     setParams({onEditingDone: this.onEditingDone});
+    this.setState({expenseDetails: params.expenseDetails});
+  }
+
+  componentDidMount() {
+    this.checkNumbers();
   }
 
   render() {
@@ -165,6 +178,24 @@ class ExpenseDetailScreen extends Component {
         <ModalWrapper
           style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
           visible={params.editorVisible}>
+          <Text style={{fontSize: 24, paddingBottom: 24}}>{this.state.name}</Text>
+          <View style={{}}>
+            <TextField
+              name={'應付'}
+              autoFocus={true}
+              defaultValue={this.state.shouldPay.toString()}
+              keyboardType={'numeric'}
+              updater={(shouldPay) => this.setState({shouldPay})}/>
+            <TextField
+              name={'已付'}
+              defaultValue={this.state.paid.toString()}
+              keyboardType={'numeric'}
+              updater={(paid) => this.setState({paid})}/>
+          </View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
+            <Button title="確認" onPress={() => this.onEditingMemberExpenseDone(true)} />
+            <Button title="取消" onPress={() => this.onEditingMemberExpenseDone(false)} />
+          </View>
         </ModalWrapper>
         <DeleteConfirmDialog
           visible={params.deleteExpenseId > 0}
@@ -173,10 +204,13 @@ class ExpenseDetailScreen extends Component {
         <View style={{paddingLeft: 10, paddingTop: 15, paddingBottom: 15}}>
           <Text style={{paddingBottom: 10, fontSize: 30, fontWeight: 'bold', color: '#77c'}}>消費明細</Text>
           <Text style={{fontSize: 12, color: '#777'}}>＊可點擊單列編輯金額</Text>
+          <WarningMessage
+            shouldPayVisible={this.state.warningShouldPayVisible}
+            paidVisible={this.state.warningPaidVisible} />
         </View>
         <FlatList
           style={{flex: 1}}
-          data={params.expenseDetails}
+          data={this.state.expenseDetails}
           ListHeaderComponent={
             () =>
             <View style={{flexDirection: 'row'}}>
@@ -189,7 +223,7 @@ class ExpenseDetailScreen extends Component {
           renderItem={
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
-                onPress={() => this.onClickExpenseMember(params.tripId, item.expenseId, item.name, item.shouldPay, item.paid,)}>
+                onPress={() => this.onClickExpenseMember(item.memberId, item.name, item.shouldPay, item.paid)}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.shouldPay}</Text>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.paid}</Text>
@@ -205,24 +239,79 @@ class ExpenseDetailScreen extends Component {
   // Helper methods.
   //--------------------------------------------------------------------
 
-  onClickExpenseMember(tripId, expenseId, name, shouldPay, paid) {
-    // TODO
+  getInitialState = () => {
+    var expenseDetails = this.props && this.props.navigation && this.props.navigation.state.params
+        ? this.props.navigation.state.params.expenseDetails : [];
+    return {
+      warningPaidVisible: false,
+      warningShouldPayVisible: false,
+      expenseDetails,
+      // Editing data.
+      memberId: -1,
+      name: '',
+      shouldPay: 0,
+      paid: 0
+    }
+  };
+
+  resetState = () => {
+    this.setState(this.getInitialState());
+  }
+
+  onClickExpenseMember(memberId, name, shouldPay, paid) {
+    this.setState({memberId, name, shouldPay, paid});
+    this.props.navigation.setParams({editorVisible: true});
   }
 
   onEditingMemberExpenseDone = (okay) => {
-    const { setParams, goBack } = this.props.navigation;
-    const { params } = this.props.navigation.state;
+    const { setParams } = this.props.navigation;
 
-    alert(okay);
-    // TODO
+    setParams({editorVisible: false});
+
+    // Update numbers.
+    if (okay) {
+      for (var i = 0; i < this.state.expenseDetails.length; i++) {
+        var e = this.state.expenseDetails[i];
+        if (e.memberId == this.state.memberId) {
+          e.shouldPay = parseInt(this.state.shouldPay);
+          e.paid = parseInt(this.state.paid);
+          break;
+        }
+      }
+    }
+
+    this.checkNumbers();
+  }
+
+  checkNumbers = () => {
+    // Check whether the input numbers are mismatched.
+    var totalPaid = 0;
+    var totalShouldPay = 0;
+    for (var i = 0; i < this.state.expenseDetails.length; i++) {
+      var e = this.state.expenseDetails[i];
+      totalPaid += e.paid;
+      totalShouldPay += e.shouldPay;
+    }
+    var cost = this.props.navigation.state.params.cost;
+    console.log('XXX', cost, totalShouldPay, totalPaid);
+    this.setState({warningShouldPayVisible: totalShouldPay !== cost});
+    this.setState({warningPaidVisible: totalPaid !== cost});
   }
 
   onEditingDone = () => {
     const { setParams, goBack } = this.props.navigation;
     const { params } = this.props.navigation.state;
 
-    // TODO
+    // Update to the store.
+    var members = {};
+    for (var i = 0; i < this.state.expenseDetails.length; i++) {
+      var e = this.state.expenseDetails[i];
+      members[e.memberId] = { paid: e.paid, shouldPay: e.shouldPay };
+    }
+    var expense = { name: params.name, cost: params.cost, members };
+    params.store.updateExpense(params.tripId, params.expenseId, expense);
 
+    // Go back to the last page.
     params.notifyDataUpdated();
     goBack();
   }
@@ -240,5 +329,37 @@ class ExpenseDetailScreen extends Component {
   }
 }
 
+
+class WarningMessage extends Component
+{
+  render() {
+    if (!this.props.shouldPayVisible && !this.props.paidVisible) {
+      return ( <View /> );
+    }
+
+    if (this.props.shouldPayVisible && this.props.paidVisible) {
+      return (
+        <View style={{paddingTop: 12}}>
+          <Text style={{fontSize: 12, color: '#f77'}}>應付總和不等於支出金額</Text>
+          <Text style={{fontSize: 12, color: '#f77'}}>已付總和不等於支出金額</Text>
+        </View>
+      );
+    }
+
+    if (this.props.shouldPayVisible) {
+      return (
+        <View style={{paddingTop: 12}}>
+          <Text style={{fontSize: 12, color: '#f77'}}>應付總和不等於支出金額</Text>
+        </View>
+      );
+    }
+
+    return (
+      <View style={{paddingTop: 12}}>
+        <Text style={{fontSize: 12, color: '#f77'}}>已付總和不等於支出金額</Text>
+      </View>
+    );
+  }
+}
 
 export { AddExpenseStep1Screen, AddExpenseStep2Screen, ExpenseDetailScreen };

@@ -276,6 +276,8 @@ class AddExpenseScreen extends Component {
       notifyDataUpdated: () => {
         // TODO
       },
+      // This is used to go back to TripContentScreen directly.
+      navigationBackKey: this.props.navigation.state.key,
     });
   }
 }
@@ -489,7 +491,7 @@ class ExpenseDetailScreen extends Component {
       // New data.
       // TODO
       params.notifyDataUpdated();
-      goBack();
+      goBack(params.navigationBackKey);
     }
   }
 

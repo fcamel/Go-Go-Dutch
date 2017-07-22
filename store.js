@@ -56,8 +56,8 @@ export default class DummyStore {
 
   getTrips() {
     var trips = [];
-    for (var id in this.store.trips) {
-        trips.push(this.store.trips[id]);
+    for (let id in this.store.trips) {
+      trips.push(this.store.trips[id]);
     }
     trips.sort(function (a, b) {
       return parseInt(a.id) - parseInt(b.id);
@@ -89,7 +89,7 @@ export default class DummyStore {
       return members;
     }
 
-    for (var key in this.store.trips[tripId].members) {
+    for (let key in this.store.trips[tripId].members) {
       key = parseInt(key);
       var m = this.store.trips[tripId].members[key];
       members.push({
@@ -103,7 +103,7 @@ export default class DummyStore {
   }
 
   getMemberName(tripId, memberId) {
-    for (var key in this.store.trips[tripId].members) {
+    for (let key in this.store.trips[tripId].members) {
       key = parseInt(key);
       if (key == memberId)
         return this.store.trips[tripId].members[key].name;
@@ -127,11 +127,11 @@ export default class DummyStore {
 
   getExpenses(tripId) {
     var expenses = [];
-    for (var key in this.store.trips[tripId].expenses) {
+    for (let key in this.store.trips[tripId].expenses) {
       key = parseInt(key);
-      var e = this.store.trips[tripId].expenses[key];
-      var members = [];
-      for (var memberId in e.members) {
+      let e = this.store.trips[tripId].expenses[key];
+      let members = [];
+      for (let memberId in e.members) {
         members.push(this.getMemberName(tripId, memberId));
       }
       members.sort();
@@ -148,24 +148,24 @@ export default class DummyStore {
   }
 
   getSummary(tripId) {
-    var members = this.getMembers(tripId);
-    var summary = {};
-    for (var i = 0; i < members.length; i++) {
-      var m = members[i];
+    let members = this.getMembers(tripId);
+    let summary = {};
+    for (let i = 0; i < members.length; i++) {
+      let m = members[i];
       summary[m.id] = { key: m.id, member_id: m.id, name: m.name, paid: 0, shouldPay: 0 };
     }
 
-    for (var key in this.store.trips[tripId].expenses) {
+    for (let key in this.store.trips[tripId].expenses) {
       key = parseInt(key);
-      var e = this.store.trips[tripId].expenses[key];
-      for (var member_id in e.members) {
+      let e = this.store.trips[tripId].expenses[key];
+      for (let member_id in e.members) {
         summary[member_id].paid += e.members[member_id].paid;
         summary[member_id].shouldPay += e.members[member_id].shouldPay;
       }
     }
 
-    var results = [];
-    for (var m in summary) {
+    let results = [];
+    for (let m in summary) {
       results.push(summary[m]);
     }
     results.sort();

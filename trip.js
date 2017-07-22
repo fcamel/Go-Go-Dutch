@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 
-import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation'
+import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
 import ModalWrapper from 'react-native-modal-wrapper';
 
 import DummyStore from './store';
@@ -25,7 +25,7 @@ let gStore = new DummyStore();
 
 class TripListScreen extends Component {
   static navigationOptions = ({ navigation }) => {
-    const {state, setParams} = navigation;
+    const {setParams} = navigation;
     return {
       title: '記帳本',
       headerRight: (
@@ -73,8 +73,8 @@ class TripListScreen extends Component {
                 onPress={() => this.onClickTrip(item.id, item.name)}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
                 <View style={{margin: 8, flexDirection: 'row', width: 100, justifyContent: 'space-around'}}>
-                  <Button title="編輯" onPress={() => {this.onEditTrip(item.id, item.name)}} />
-                  <Button title="刪除" onPress={() => {this.onDeleteTrip(item.id)}} />
+                  <Button title="編輯" onPress={() => {this.onEditTrip(item.id, item.name);}} />
+                  <Button title="刪除" onPress={() => {this.onDeleteTrip(item.id);}} />
                 </View>
               </TouchableOpacity>
           }
@@ -88,7 +88,7 @@ class TripListScreen extends Component {
   //--------------------------------------------------------------------
   onEditTrip(id, name) {
     this.setState({id, name});
-    this.props.navigation.setParams({editTripVisible: true})
+    this.props.navigation.setParams({editTripVisible: true});
   }
 
   onFinishEditTrip(done) {
@@ -100,17 +100,17 @@ class TripListScreen extends Component {
       }
     }
 
-    this.props.navigation.setParams({editTripVisible: false})
+    this.props.navigation.setParams({editTripVisible: false});
     this.setState({id: -1, name: ''});
   }
 
   onDeleteTrip = (id) => {
-    this.props.navigation.setParams({deleteTripId: id})
+    this.props.navigation.setParams({deleteTripId: id});
   }
 
   onRespondDelete = (okay) => {
     var id = this.props.navigation.state.params.deleteTripId;
-    this.props.navigation.setParams({deleteTripId: 0})
+    this.props.navigation.setParams({deleteTripId: 0});
     if (okay) {
       this.store.deleteTrip(id);
     }
@@ -119,9 +119,9 @@ class TripListScreen extends Component {
   onClickTrip = (id, name) => {
     var members = this.store.getMembers(id);
     var activeTab = (!members || members.length <= 0)
-        ? TripContentMainView.Tabs.Members
-        : TripContentMainView.Tabs.Expenses;
-    this.props.navigation.navigate('Trip', {title: name, tripId: id, activeTab})
+      ? TripContentMainView.Tabs.Members
+      : TripContentMainView.Tabs.Expenses;
+    this.props.navigation.navigate('Trip', {title: name, tripId: id, activeTab});
   }
 }
 

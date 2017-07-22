@@ -1,12 +1,11 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React from 'react';
 import { AppRegistry } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
 import { TripListScreen, TripContentScreen } from './trip';
-import ExpensesView, { AddExpenseScreen, ExpenseDetailScreen } from './expense';
-import SummaryView from './summary';
+import { AddExpenseScreen, ExpenseDetailScreen } from './expense';
 
 
 const GoGoDutch = StackNavigator({

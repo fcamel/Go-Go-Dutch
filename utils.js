@@ -9,7 +9,7 @@ import styles from './styles';
 class TextField extends Component {
   render() {
     const {
-      name='', autoFocus=false, placeholder='', defaultValue='', keyboardType='default', returnKeyType='done',
+      name='', autoFocus=false, placeholder='', defaultValue='', keyboardType='default',
       updater,
     } = this.props;
 

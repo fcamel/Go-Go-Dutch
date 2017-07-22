@@ -6,7 +6,6 @@ import {
   Button,
   FlatList,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -60,7 +59,7 @@ export default class MembersView extends Component {
                 onPress={() => this.onClickMember(item.id, item.name, item.ratio)}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name + '(' + item.ratio + ')'}</Text>
                 <View style={{margin: 8}}>
-                  <Button title="刪除" onPress={() => {this.onDeleteMember(item.id)}} />
+                  <Button title="刪除" onPress={() => {this.onDeleteMember(item.id);}} />
                 </View>
               </TouchableOpacity>
           }
@@ -73,7 +72,7 @@ export default class MembersView extends Component {
   // Helper methods.
   //--------------------------------------------------------------------
   getInitialState() {
-    return { memberId: -1, name: '', ratio: 1, deleteMemberId: 0, }
+    return { memberId: -1, name: '', ratio: 1, deleteMemberId: 0, };
   }
   resetState() {
     this.setState(() => { return this.getInitialState(); });
@@ -83,7 +82,7 @@ export default class MembersView extends Component {
     this.setState(() => {
       return {
         memberId, name, ratio, deleteMemberId: 0,
-      }
+      };
     });
     this.props.showEditor(true);
   }

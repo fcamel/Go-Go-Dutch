@@ -8,13 +8,12 @@ import {
   Picker,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 
 import ModalWrapper from 'react-native-modal-wrapper';
-import SelectMultiple from 'react-native-select-multiple'
+import SelectMultiple from 'react-native-select-multiple';
 
 import styles from './styles';
 import { TextField, DeleteConfirmDialog } from './utils';
@@ -35,11 +34,11 @@ export default class ExpensesView extends Component {
           extraData={this.state.dataUpdateDetector}
           ListHeaderComponent={
             () =>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>消費名稱</Text>
-              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>金額</Text>
-              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>拆帳成員</Text>
-            </View>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>消費名稱</Text>
+                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>金額</Text>
+                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>拆帳成員</Text>
+              </View>
           }
           renderItem={
             ({item}) =>
@@ -62,10 +61,10 @@ export default class ExpensesView extends Component {
   getInitialState() {
     return {
       dataUpdateDetector: {},
-    }
+    };
   }
   resetState() {
-    this.setState(() => getInitialState());
+    this.setState(() => this.getInitialState());
   }
 
   onClickExpense(expenseId, name, cost, details) {
@@ -109,7 +108,7 @@ export default class ExpensesView extends Component {
       deleteExpenseButtonVisible: true,
       editorVisible: false,
       deleteExpenseId: -1,
-      notifyDataUpdated: () => { this.setState({dataUpdateDetector: {}}) }
+      notifyDataUpdated: () => { this.setState({dataUpdateDetector: {}}); }
     });
   }
 }
@@ -117,24 +116,23 @@ export default class ExpensesView extends Component {
 
 class AddExpenseScreen extends Component {
   static navigationOptions = ({ navigation }) => {
-    const {state, setParams, navigate} = navigation;
-      return {
-        title: state.params.title,
-        headerRight: (
-          <Button title='下一步' onPress={() => { state.params.onNext(); }}/>
-        ),
-      };
+    const {state } = navigation;
+    return {
+      title: state.params.title,
+      headerRight: (
+        <Button title='下一步' onPress={() => { state.params.onNext(); }}/>
+      ),
+    };
   };
 
   constructor() {
     super();
 
-    this.state = { name: '', cost: 0, payer: -1 };
+    this.state = { name: '', cost: 0, payer: -1, selectedMembers: [] };
   }
 
   componentWillMount() {
     const { setParams } = this.props.navigation;
-    const { params } = this.props.navigation.state;
     setParams({onNext: this.onNext});
   }
 
@@ -143,7 +141,7 @@ class AddExpenseScreen extends Component {
     const { params } = navigation.state;
 
     let pickerMembers = params.store.getMembers(params.tripId).map( (m) => {
-      return <Picker.Item key={m.id} label={m.name} value={m.id} />
+      return <Picker.Item key={m.id} label={m.name} value={m.id} />;
     });
 
     const members = params.store.getMembers(params.tripId).map( (m) => {
@@ -170,7 +168,7 @@ class AddExpenseScreen extends Component {
             <Picker
               style={{flex: 1}}
               selectedValue={this.state.payer}
-              onValueChange={(value, index) => this.setState({payer: value})}>
+              onValueChange={(value) => this.setState({payer: value})}>
               <Picker.Item key={-1} label={'(多人付帳)'} value={-1} />
               {pickerMembers}
             </Picker>
@@ -380,12 +378,12 @@ class ExpenseDetailScreen extends Component {
           data={this.state.expenseDetails}
           ListHeaderComponent={
             () =>
-            <View style={{flexDirection: 'row'}}>
-              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>成員</Text>
-              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>應付</Text>
-              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>已付</Text>
-              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>差額</Text>
-            </View>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>成員</Text>
+                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>應付</Text>
+                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>已付</Text>
+                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>差額</Text>
+              </View>
           }
           renderItem={
             ({item}) =>
@@ -408,7 +406,7 @@ class ExpenseDetailScreen extends Component {
 
   getInitialState = () => {
     var expenseDetails = this.props && this.props.navigation && this.props.navigation.state.params
-        ? this.props.navigation.state.params.expenseDetails : [];
+      ? this.props.navigation.state.params.expenseDetails : [];
     return {
       warningPaidVisible: false,
       warningShouldPayVisible: false,
@@ -418,7 +416,7 @@ class ExpenseDetailScreen extends Component {
       name: '',
       shouldPay: 0,
       paid: 0
-    }
+    };
   };
 
   resetState = () => {
@@ -466,7 +464,7 @@ class ExpenseDetailScreen extends Component {
   }
 
   onEditingDone = () => {
-    const { setParams, goBack } = this.props.navigation;
+    const { goBack } = this.props.navigation;
     const { params } = this.props.navigation.state;
 
     // Update to the store.

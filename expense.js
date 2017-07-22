@@ -130,9 +130,9 @@ class ExpenseDetailScreen extends Component {
               setParams({deleteExpenseId: params.expenseId});
             }} />
             <Button title='完成' onPress={() => {
-              // TODO
-              params.notifyDataUpdated();
-              navigation.goBack();
+              if (params.onEditingDone) {
+                params.onEditingDone();
+              }
             }}/>
           </View>
         ),
@@ -142,14 +142,19 @@ class ExpenseDetailScreen extends Component {
         title: params.title,
         headerRight: (
           <Button title='完成' onPress={() => {
-            // TODO
-            params.notifyDataUpdated();
-            navigation.goBack();
+            if (params.onEditingDone) {
+              params.onEditingDone();
+            }
           }}/>
         ),
       };
     }
   };
+
+  componentWillMount() {
+    const { setParams } = this.props.navigation;
+    setParams({onEditingDone: this.onEditingDone});
+  }
 
   render() {
     const { params } = this.props.navigation.state;
@@ -212,12 +217,30 @@ class ExpenseDetailScreen extends Component {
     // TODO
   }
 
-  onRespondDeleteExpense(confirmed) {
+  onEditingMemberExpenseDone = (okay) => {
+    const { setParams, goBack } = this.props.navigation;
+    const { params } = this.props.navigation.state;
+
+    alert(okay);
+    // TODO
+  }
+
+  onEditingDone = () => {
+    const { setParams, goBack } = this.props.navigation;
+    const { params } = this.props.navigation.state;
+
+    // TODO
+
+    params.notifyDataUpdated();
+    goBack();
+  }
+
+  onRespondDeleteExpense = (okay) => {
     const { setParams, goBack } = this.props.navigation;
     const { params } = this.props.navigation.state;
 
     setParams({deleteExpenseId: -1});
-    if (confirmed) {
+    if (okay) {
       params.store.deleteExpense(params.tripId, params.deleteExpenseId);
       params.notifyDataUpdated();
       goBack();

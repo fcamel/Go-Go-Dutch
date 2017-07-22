@@ -13,6 +13,7 @@ import {
 import ModalWrapper from 'react-native-modal-wrapper';
 
 import styles from './styles';
+import { DeleteConfirmDialog } from './utils';
 
 
 export default class ExpensesView extends Component {
@@ -165,18 +166,9 @@ class ExpenseDetailScreen extends Component {
           style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
           visible={params.editorVisible}>
         </ModalWrapper>
-        <ModalWrapper
-          containerStyle={{ flexDirection: 'row', alignItems: 'flex-end' }}
-          visible={params.deleteExpenseId > 0}>
-          <TouchableOpacity style={{}}
-            onPress={() => this.onRespondDeleteExpense(true)}>
-            <Text style={[styles.bottomMenuItem, {backgroundColor: '#f55'}]}>刪除</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{}}
-            onPress={() => this.onRespondDeleteExpense(false)}>
-            <Text style={styles.bottomMenuItem}>取消</Text>
-          </TouchableOpacity>
-        </ModalWrapper>
+        <DeleteConfirmDialog
+          visible={params.deleteExpenseId > 0}
+          onRespond={this.onRespondDeleteExpense} />
 
         <View style={{paddingLeft: 10, paddingTop: 15, paddingBottom: 15}}>
           <Text style={{paddingBottom: 10, fontSize: 30, fontWeight: 'bold', color: '#77c'}}>消費明細</Text>

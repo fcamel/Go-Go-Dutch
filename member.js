@@ -14,7 +14,7 @@ import {
 import ModalWrapper from 'react-native-modal-wrapper';
 
 import styles from './styles';
-import { TextField } from './utils';
+import { TextField, DeleteConfirmDialog } from './utils';
 
 
 export default class MembersView extends Component {
@@ -47,18 +47,9 @@ export default class MembersView extends Component {
             <Button title="取消" onPress={this.onCancelEditMember} />
           </View>
         </ModalWrapper>
-        <ModalWrapper
-          containerStyle={{ flexDirection: 'row', alignItems: 'flex-end' }}
-          visible={this.state.deleteMemberId > 0}>
-          <TouchableOpacity style={{}}
-            onPress={() => { this.onConfirmDeleteMember() }}>
-            <Text style={[styles.bottomMenuItem, {backgroundColor: '#f55'}]}>刪除</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{}}
-            onPress={this.onCancelDeleteMember}>
-            <Text style={styles.bottomMenuItem}>取消</Text>
-          </TouchableOpacity>
-        </ModalWrapper>
+        <DeleteConfirmDialog
+          visible={this.state.deleteMemberId > 0}
+          onRespond={this.onRespondDelete} />
 
         <FlatList
           style={{flex: 1}}
@@ -124,12 +115,10 @@ export default class MembersView extends Component {
     });
   }
 
-  onConfirmDeleteMember = () => {
-    this.props.store.deleteMember(this.props.tripId, this.state.deleteMemberId);
-    this.resetState();
-  }
-
-  onCancelDeleteMember = () => {
+  onRespondDelete = (okay) => {
+    if (okay) {
+      this.props.store.deleteMember(this.props.tripId, this.state.deleteMemberId);
+    }
     this.resetState();
   }
 }

@@ -18,6 +18,7 @@ import styles from './styles';
 import MembersView from './member';
 import ExpensesView, { AddExpenseStep1Screen, AddExpenseStep2Screen, ExpenseDetailScreen } from './expense';
 import SummaryView from './summary';
+import { DeleteConfirmDialog } from './utils';
 
 
 let gStore = new DummyStore();
@@ -59,18 +60,9 @@ class TripListScreen extends Component {
             <Button title="取消" onPress={() => this.onFinishEditTrip(false)} />
           </View>
         </ModalWrapper>
-        <ModalWrapper
-          containerStyle={{ flexDirection: 'row', alignItems: 'flex-end' }}
-          visible={!!params.deleteTripId}>
-          <TouchableOpacity style={{}}
-            onPress={() => { this.onConfirmDeleteTrip(params.deleteTripId ? params.deleteTripId : 0) }}>
-            <Text style={[styles.bottomMenuItem, {backgroundColor: '#f55'}]}>刪除</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{}}
-            onPress={this.onCancelDeleteTrip}>
-            <Text style={styles.bottomMenuItem}>取消</Text>
-          </TouchableOpacity>
-        </ModalWrapper>
+        <DeleteConfirmDialog
+          visible={!!params.deleteTripId}
+          onRespond={this.onRespondDelete} />
 
         <FlatList
           style={{flex: 1}}
@@ -116,13 +108,12 @@ class TripListScreen extends Component {
     this.props.navigation.setParams({deleteTripId: id})
   }
 
-  onConfirmDeleteTrip = (id) => {
-    this.store.deleteTrip(id);
+  onRespondDelete = (okay) => {
+    var id = this.props.navigation.state.params.deleteTripId;
     this.props.navigation.setParams({deleteTripId: 0})
-  }
-
-  onCancelDeleteTrip = () => {
-    this.props.navigation.setParams({deleteTripId: 0})
+    if (okay) {
+      this.store.deleteTrip(id);
+    }
   }
 
   onClickTrip = (id, name) => {

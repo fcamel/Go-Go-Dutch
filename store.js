@@ -17,8 +17,8 @@ export default class DummyStore {
     // Fill dummy members.
     this.nextMemberId = 1;
     var trip = this.getTrips()[0];
-    this.addMember(trip.id, '王小明', 1);
-    this.addMember(trip.id, '工藤新一', 2);
+    this.addMember(trip.id, '吉吉', 1);
+    this.addMember(trip.id, '小小兵', 2);
     this.addMember(trip.id, '三眼怪', 3);
 
     // Fill dummy expenses.
@@ -85,6 +85,10 @@ export default class DummyStore {
 
   getMembers(tripId) {
     var members = [];
+    if (!(tripId in this.store.trips)) {
+      return members;
+    }
+
     for (var key in this.store.trips[tripId].members) {
       key = parseInt(key);
       var m = this.store.trips[tripId].members[key];

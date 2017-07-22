@@ -15,9 +15,9 @@ class TextField extends Component {
 
     return (
       <View style={{flexDirection: 'row'}}>
-        <Text style={{width: 100, textAlignVertical: 'center'}}>{name}</Text>
+        <Text style={[styles.contentText, {width: 100, textAlignVertical: 'center'}]}>{name}</Text>
         <TextInput
-          style={{width: 100}}
+          style={[styles.contentText, {width: 150}]}
           autoFocus={autoFocus}
           placeholder={placeholder}
           defaultValue={defaultValue}

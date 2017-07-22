@@ -16,7 +16,7 @@ import ModalWrapper from 'react-native-modal-wrapper';
 import DummyStore from './store';
 import styles from './styles';
 import MembersView from './member';
-import ExpensesView, { AddExpenseStep1Screen, AddExpenseStep2Screen, ExpenseDetailScreen } from './expense';
+import ExpensesView from './expense';
 import SummaryView from './summary';
 import { DeleteConfirmDialog } from './utils';
 
@@ -127,7 +127,7 @@ class TripListScreen extends Component {
 
 class TripContentScreen extends Component {
   static navigationOptions = ({ navigation }) => {
-    const {state, setParams} = navigation;
+    const {state, setParams, navigate} = navigation;
     if (state.params.activeTab === TripContentMainView.Tabs.Members) {
       return {
         title: state.params.title,
@@ -142,12 +142,16 @@ class TripContentScreen extends Component {
         title: state.params.title,
         headerRight: (
           <Button title='新增消費' onPress={() => {
-            setParams({editorVisible: true});
+            navigate('AddExpense', {
+              tripId: state.params.tripId,
+              title: state.params.title,
+              store: gStore,
+            });
           }}/>
         ),
       };
     } else {
-      // TODO
+      // TODO: export CSV.
       return {
         title: state.params.title,
       };

@@ -36,12 +36,12 @@ export default class MembersView extends Component {
             defaultValue={this.state.name}
             updater={(name) => this.setState({name})}/>
           <TextField
-            name={'付費比例 (人數)'}
+            name={'人數'}
             autoFocus={false}
             placeholder={''}
             defaultValue={this.state.ratio.toString()}
             keyboardType={'numeric'}
-            updater={(ratio) => this.setState({ratio})}/>
+            updater={(ratio) => this.setState({ratio: parseFloat(ratio)})}/>
           <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
             <Button title="確認" onPress={this.onFinishEditMember} />
             <Button title="取消" onPress={this.onCancelEditMember} />
@@ -91,7 +91,7 @@ export default class MembersView extends Component {
   onFinishEditMember = () => {
     var { tripId } = this.props;
     var { memberId, name, ratio } = this.state;
-    ratio = parseInt(ratio);
+    ratio = parseFloat(ratio);
     if (name.length > 0 && !isNaN(ratio) && ratio > 0) {
       if (memberId !== undefined && memberId > 0) {
         this.props.store.updateMember(tripId, memberId, name, ratio);

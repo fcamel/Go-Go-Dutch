@@ -4,6 +4,9 @@
 import { Dimensions, StyleSheet, } from 'react-native';
 
 export default StyleSheet.create({
+  contentText: {
+    fontSize: 16,
+  },
   tableHeader: {
     color: '#ccc',
     backgroundColor: '#333',

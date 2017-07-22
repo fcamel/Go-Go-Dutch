@@ -124,6 +124,15 @@ class DummyStore {
     return members;
   }
 
+  getMemberName(tripId, memberId) {
+    for (var key in this.store.trips[tripId].members) {
+      key = parseInt(key);
+      if (key == memberId)
+        return this.store.trips[tripId].members[key].name;
+    }
+    return '';
+  }
+
   addExpense(tripId, expense) {
     this.updateExpense(tripId, this.nextExpenseId++, expense);
   }
@@ -139,27 +148,25 @@ class DummyStore {
   }
 
   getExpenses(tripId) {
-    var allMembers = this.getMembers(tripId);
     var expenses = [];
     for (var key in this.store.trips[tripId].expenses) {
       key = parseInt(key);
       var e = this.store.trips[tripId].expenses[key];
       var members = [];
-      for (var memberId in allMembers) {
-        if (memberId in e.members)
-          members.push(allMembers[memberId].name);
+      for (var memberId in e.members) {
+        members.push(this.getMemberName(tripId, memberId));
       }
       members.sort();
       expenses.push({
         key: key,
         id: key,
-        expense: {
-          name: e.name,
-          cost: e.cost,
-          members,
-        }
+        name: e.name,
+        cost: e.cost,
+        members,
+        details: e.members,
       });
     }
+    console.log('getExpenses', expenses);
     return expenses;
   }
 
@@ -577,10 +584,10 @@ class ExpensesView extends Component {
           renderItem={
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
-                onPress={() => this.onClickExpense(item.id, item.expense)}>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.expense.name}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.expense.cost}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.expense.members.join(',')}</Text>
+                onPress={() => this.onClickExpense(item.id, item.name, item.cost, item.details)}>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.cost}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.members.join(', ')}</Text>
               </TouchableOpacity>
           }
         />
@@ -601,32 +608,65 @@ class ExpensesView extends Component {
     this.setState(() => getInitialState());
   }
 
-  onClickExpense(expenseId, expense) {
-    // Format of expense:
+  onClickExpense(expenseId, name, cost, details) {
+    // Format of details:
     // {
-    //   name: '...',
-    //   cost: 0,
-    //   members: {
-    //     member_id: { paid: 0, shouldPay: 0 },
+    //   memberId: { paid: 0, shouldPay: 0 },
+    //     ...
     //   }
     // }
-    this.props.navigation.navigate('EditExpense', {
+    var expenseDetails = [];
+    console.log('onClickExpense', details);
+    for (var memberId in details) {
+      var r = details[memberId];
+      memberId = parseInt(memberId);
+      console.log('onClickExpense', memberId, r);
+      expenseDetails.push({
+        key: memberId,
+        memberId,
+        name: this.props.store.getMemberName(this.props.tripId, memberId),
+        paid: r.paid,
+        shouldPay: r.shouldPay,
+      });
+    }
+    expenseDetails.sort(function(a, b) {
+      if (a.name < b.name)
+        return -1;
+      if (a.name > b.name)
+        return 1;
+      return 0;
+    });
+
+    console.log('onClickExpense', expenseDetails);
+
+    this.props.navigation.navigate('ExpenseDetail', {
       store: this.props.store,
       tripId: this.props.tripId,
+      title: `${name} ($${cost})`,
       expenseId,
-      expense,
+      expenseDetails,
       deleteExpenseButtonVisible: true,
       dataUpdater: () => { this.setState({dataUpdateDetector: {}}) }
     });
   }
 }
 
-class EditExpenseScreen extends Component {
+
+// TODO
+class AddExpenseStep1Screen extends Component {
+}
+
+// TODO
+class AddExpenseStep2Screen extends Component {
+}
+
+class ExpenseDetailScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const { setParams } = navigation;
     const { params } = navigation.state;
     if (params.deleteExpenseButtonVisible) {
       return {
+        title: params.title,
         headerRight: (
           <View style={{width: 100, flexDirection: 'row', justifyContent: 'space-around'}}>
             <Button title='刪除' onPress={() => {
@@ -634,23 +674,66 @@ class EditExpenseScreen extends Component {
               params.dataUpdater();
               navigation.goBack();
             }} />
-            <Button title='完成' />
+            <Button title='完成' onPress={() => {
+              // TODO
+              params.dataUpdater();
+              navigation.goBack();
+            }}/>
           </View>
         ),
       };
     } else {
       return {
+        title: params.title,
         headerRight: (
-          <Button title='完成' onPress={() => setParams({editTripVisible: true})} />
+          <Button title='完成' onPress={() => {
+            // TODO
+            params.dataUpdater();
+            navigation.goBack();
+          }}/>
         ),
       };
     }
   };
 
   render() {
+    const { params } = this.props.navigation.state;
+
     return (
-      <View/>
+      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+        <FlatList
+          style={{flex: 1}}
+          data={params.expenseDetails}
+          ListHeaderComponent={
+            () =>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>成員</Text>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>應付</Text>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>已付</Text>
+              <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>差額</Text>
+            </View>
+          }
+          renderItem={
+            ({item}) =>
+              <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
+                onPress={() => this.onClickExpenseDetail(params.tripId, item.expenseId, item.name, item.shouldPay, item.paid,)}>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.shouldPay}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.paid}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.shouldPay - item.paid}</Text>
+              </TouchableOpacity>
+          }
+        />
+      </View>
     );
+  }
+
+  //--------------------------------------------------------------------
+  // Helper methods.
+  //--------------------------------------------------------------------
+
+  onClickExpenseDetail(tripId, expenseId, name, shouldPay, paid) {
+    // TODO
   }
 }
 
@@ -739,9 +822,9 @@ const styles = StyleSheet.create({
 const GoGoDutch = StackNavigator({
   Home: { screen: TripListScreen, },
   Trip: { screen: TripContentScreen, },
-  // TODO: AddExpense
-  // TODO: AddExpense2
-  EditExpense: { screen: EditExpenseScreen, },
+  AddExpenseStep1: { screen: AddExpenseStep1Screen, },
+  AddExpenseStep2: { screen: AddExpenseStep2Screen, },
+  ExpenseDetail: { screen: ExpenseDetailScreen, },
 });
 
 AppRegistry.registerComponent('go_go_dutch', () => GoGoDutch);

@@ -200,10 +200,6 @@ class AddExpenseScreen extends Component {
 
     Keyboard.dismiss();
 
-    // TODO: auto fill
-    // this.state.payer: memberId
-    // this.state.selectedMembers
-
     // Prepare the data.
     console.log('XXX', this.state.payer, this.state.selectedMembers);
     let expenseDetails = [];
@@ -224,16 +220,18 @@ class AddExpenseScreen extends Component {
         members.push(m);
     }
 
-    let payerInMembers = false;
-    for (let i = 0; i < members.length; i++) {
-      if (members[i].id === payerId) {
-        payerInMembers = true;
-        break;
+    if (payerId > 0) {
+      let payerInMembers = false;
+      for (let i = 0; i < members.length; i++) {
+        if (members[i].id === payerId) {
+          payerInMembers = true;
+          break;
+        }
       }
-    }
-    if (!payerInMembers) {
-      payer.ratio = 0;
-      members.push(payer);
+      if (!payerInMembers) {
+        payer.ratio = 0;
+        members.push(payer);
+      }
     }
 
     let ratioTotal = 0;
@@ -264,7 +262,7 @@ class AddExpenseScreen extends Component {
       return 0;
     });
 
-    console.log('WTF', this.state.name, this.state.cost);
+    console.log('WTF', expenseDetails);
     navigate('ExpenseDetail', {
       store: params.store,
       tripId: params.tripId,

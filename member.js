@@ -88,8 +88,8 @@ export default class MembersView extends Component {
   }
 
   onFinishEditMember = () => {
-    var { tripId } = this.props;
-    var { memberId, name, ratio } = this.state;
+    let { tripId } = this.props;
+    let { memberId, name, ratio } = this.state;
     ratio = parseFloat(ratio);
     if (name.length > 0 && !isNaN(ratio) && ratio > 0) {
       if (memberId !== undefined && memberId > 0) {

@@ -16,15 +16,15 @@ export default class DummyStore {
 
     // Fill dummy members.
     this.nextMemberId = 1;
-    var trip = this.getTrips()[0];
+    let trip = this.getTrips()[0];
     this.addMember(trip.id, '吉吉', 1);
     this.addMember(trip.id, '小小兵', 2);
     this.addMember(trip.id, '三眼怪', 3);
 
     // Fill dummy expenses.
     this.nextExpenseId = 1;
-    var ms = this.getMembers(trip.id);
-    var members = {};
+    let ms = this.getMembers(trip.id);
+    let members = {};
     members[ms[0].id] = { paid: 0, shouldPay: 2000, };
     members[ms[1].id] = { paid: 0, shouldPay: 1000, };
     members[ms[2].id] = { paid: 5000, shouldPay: 2000, };
@@ -40,7 +40,7 @@ export default class DummyStore {
   }
 
   addTrip(name) {
-    var id = this.nextTripId++;
+    let id = this.nextTripId++;
     this.store.trips[id] = {
       key: id,
       id,
@@ -55,7 +55,7 @@ export default class DummyStore {
   }
 
   getTrips() {
-    var trips = [];
+    let trips = [];
     for (let id in this.store.trips) {
       trips.push(this.store.trips[id]);
     }
@@ -74,24 +74,24 @@ export default class DummyStore {
   }
 
   updateMember(tripId, memberId, name, ratio) {
-    var trip = this.store.trips[tripId];
+    let trip = this.store.trips[tripId];
     trip.members[memberId] = { name, ratio };
   }
 
   deleteMember(tripId, memberId) {
-    var trip = this.store.trips[tripId];
+    let trip = this.store.trips[tripId];
     delete trip.members[memberId];
   }
 
   getMembers(tripId) {
-    var members = [];
+    let members = [];
     if (!(tripId in this.store.trips)) {
       return members;
     }
 
     for (let key in this.store.trips[tripId].members) {
       key = parseInt(key);
-      var m = this.store.trips[tripId].members[key];
+      let m = this.store.trips[tripId].members[key];
       members.push({
         key: key,
         id: key,
@@ -123,17 +123,17 @@ export default class DummyStore {
   }
 
   updateExpense(tripId, expenseId, expense) {
-    var trip = this.store.trips[tripId];
+    let trip = this.store.trips[tripId];
     trip.expenses[expenseId] = expense;
   }
 
   deleteExpense(tripId, expenseId) {
-    var trip = this.store.trips[tripId];
+    let trip = this.store.trips[tripId];
     delete trip.expenses[expenseId];
   }
 
   getExpenses(tripId) {
-    var expenses = [];
+    let expenses = [];
     for (let key in this.store.trips[tripId].expenses) {
       key = parseInt(key);
       let e = this.store.trips[tripId].expenses[key];

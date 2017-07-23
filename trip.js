@@ -109,7 +109,7 @@ class TripListScreen extends Component {
   }
 
   onRespondDelete = (okay) => {
-    var id = this.props.navigation.state.params.deleteTripId;
+    let id = this.props.navigation.state.params.deleteTripId;
     this.props.navigation.setParams({deleteTripId: 0});
     if (okay) {
       this.store.deleteTrip(id);
@@ -117,8 +117,8 @@ class TripListScreen extends Component {
   }
 
   onClickTrip = (id, name) => {
-    var members = this.store.getMembers(id);
-    var activeTab = (!members || members.length <= 0)
+    let members = this.store.getMembers(id);
+    let activeTab = (!members || members.length <= 0)
       ? TripContentMainView.Tabs.Members
       : TripContentMainView.Tabs.Expenses;
     this.props.navigation.navigate('Trip', {title: name, tripId: id, activeTab});
@@ -175,8 +175,8 @@ class TripContentScreen extends Component {
     const { params } = this.props.navigation.state;
 
     // params.editorVisible may be undefined.
-    var editorVisible = !!params.editorVisible;
-    var showEditor = (visible) => {
+    let editorVisible = !!params.editorVisible;
+    let showEditor = (visible) => {
       this.props.navigation.setParams({editorVisible: visible});
     };
 

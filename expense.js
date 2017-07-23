@@ -80,10 +80,10 @@ export default class ExpensesView extends Component {
     //     ...
     //   }
     // }
-    var expenseDetails = [];
+    let expenseDetails = [];
     console.log('onClickExpense', details);
-    for (var memberId in details) {
-      var r = details[memberId];
+    for (let memberId in details) {
+      let r = details[memberId];
       memberId = parseInt(memberId);
       console.log('onClickExpense', memberId, r);
       expenseDetails.push({
@@ -420,7 +420,7 @@ class ExpenseDetailScreen extends Component {
   //--------------------------------------------------------------------
 
   getInitialState = () => {
-    var expenseDetails = this.props && this.props.navigation && this.props.navigation.state.params
+    let expenseDetails = this.props && this.props.navigation && this.props.navigation.state.params
       ? this.props.navigation.state.params.expenseDetails : [];
     return {
       warningPaidVisible: false,
@@ -450,8 +450,8 @@ class ExpenseDetailScreen extends Component {
 
     // Update numbers.
     if (okay) {
-      for (var i = 0; i < this.state.expenseDetails.length; i++) {
-        var e = this.state.expenseDetails[i];
+      for (let i = 0; i < this.state.expenseDetails.length; i++) {
+        let e = this.state.expenseDetails[i];
         if (e.memberId == this.state.memberId) {
           e.shouldPay = parseFloat(this.state.shouldPay);
           e.paid = parseFloat(this.state.paid);
@@ -465,15 +465,15 @@ class ExpenseDetailScreen extends Component {
 
   checkNumbers = () => {
     // Check whether the input numbers are mismatched.
-    var totalPaid = 0;
-    var totalShouldPay = 0;
-    for (var i = 0; i < this.state.expenseDetails.length; i++) {
-      var e = this.state.expenseDetails[i];
+    let totalPaid = 0;
+    let totalShouldPay = 0;
+    for (let i = 0; i < this.state.expenseDetails.length; i++) {
+      let e = this.state.expenseDetails[i];
       totalPaid += e.paid;
       totalShouldPay += e.shouldPay;
     }
     const epsilon = 1e-5;
-    var cost = this.props.navigation.state.params.cost;
+    let cost = this.props.navigation.state.params.cost;
     this.setState({warningShouldPayVisible: Math.abs(totalShouldPay - cost) > epsilon});
     this.setState({warningPaidVisible: Math.abs(totalPaid - cost) > epsilon});
   }
@@ -488,12 +488,12 @@ class ExpenseDetailScreen extends Component {
     const { params } = this.props.navigation.state;
 
     // Update to the store.
-    var members = {};
-    for (var i = 0; i < this.state.expenseDetails.length; i++) {
-      var e = this.state.expenseDetails[i];
+    let members = {};
+    for (let i = 0; i < this.state.expenseDetails.length; i++) {
+      let e = this.state.expenseDetails[i];
       members[e.memberId] = { paid: e.paid, shouldPay: e.shouldPay };
     }
-    var expense = { name: params.name, cost: params.cost, members };
+    let expense = { name: params.name, cost: params.cost, members };
 
     if (params.expenseId > 0) {
       // Update existed data.
@@ -504,7 +504,7 @@ class ExpenseDetailScreen extends Component {
       goBack();
     } else {
       // New data.
-      var expense = { name: params.name, cost: params.cost, members };
+      let expense = { name: params.name, cost: params.cost, members };
       params.store.addExpense(params.tripId, expense);
 
       // Go back to the last last page.

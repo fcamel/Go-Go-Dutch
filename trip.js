@@ -12,6 +12,7 @@ import {
 
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
 import ModalWrapper from 'react-native-modal-wrapper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import FileStore from './store';
 import styles from './styles';
@@ -220,14 +221,17 @@ class TripContentScreen extends Component {
         >
           <Tab
             label="成員"
+            icon={<Icon name='people' size={20} color='#fff'/>}
             barBackgroundColor="#37474F"
           />
           <Tab
             label="消費記錄"
+            icon={<Icon name='monetization-on' size={20} color='#fff'/>}
             barBackgroundColor="#37474F"
           />
           <Tab
             label="結算"
+            icon={<Icon name='receipt' size={20} color='#fff'/>}
             barBackgroundColor="#37474F"
           />
         </BottomNavigation>

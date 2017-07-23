@@ -31,9 +31,9 @@ export default class SummaryView extends Component {
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{Number(item.shouldPay).toFixed(1)}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{Number(item.paid).toFixed(1)}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{Number(item.paid - item.shouldPay).toFixed(1)}</Text>
+                <Text style={[styles.tableData, styles.tableDataNumber, {flex: 1}]}>{Number(item.shouldPay).toFixed(1)}</Text>
+                <Text style={[styles.tableData, styles.tableDataNumber, {flex: 1}]}>{Number(item.paid).toFixed(1)}</Text>
+                <Text style={[styles.tableData, styles.tableDataNumber, {flex: 1}]}>{Number(item.paid - item.shouldPay).toFixed(1)}</Text>
               </TouchableOpacity>
           }
         />

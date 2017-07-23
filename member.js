@@ -12,7 +12,7 @@ import {
 
 import ModalWrapper from 'react-native-modal-wrapper';
 
-import styles from './styles';
+import styles, { BUTTON_COLOR } from './styles';
 import { TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
 
 
@@ -28,27 +28,30 @@ export default class MembersView extends Component {
         <ModalWrapper
           style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
           visible={this.props.editorVisible}>
-          <TextField
-            name={'名稱'}
-            autoFocus={true}
-            placeholder={'阿土伯'}
-            value={this.state.name}
-            updater={(name) => this.setState({name})}/>
-          <TextField
-            name={'人數'}
-            autoFocus={false}
-            placeholder={''}
-            value={this.state.ratio}
-            keyboardType={'numeric'}
-            onBlur={() => {
-              let f = parseFloat(this.state.ratio);
-              if (isNaN(f))
-                this.setState({ratio: '1'});
-            }}
-            updater={(ratio) => this.setState({ratio: toEmptyOrNumericString(ratio)})}/>
-          <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
-            <Button title="確認" onPress={this.onFinishEditMember} />
-            <Button title="取消" onPress={this.onCancelEditMember} />
+          <Text style={{fontSize: 30, paddingBottom: 10}}>輸入成員資訊：</Text>
+          <View style={{paddingLeft: 10}}>
+            <TextField
+              name={'名稱'}
+              autoFocus={true}
+              placeholder={'阿土伯'}
+              value={this.state.name}
+              updater={(name) => this.setState({name})}/>
+            <TextField
+              name={'人數'}
+              autoFocus={false}
+              placeholder={''}
+              value={this.state.ratio}
+              keyboardType={'numeric'}
+              onBlur={() => {
+                let f = parseFloat(this.state.ratio);
+                if (isNaN(f))
+                  this.setState({ratio: '1'});
+              }}
+              updater={(ratio) => this.setState({ratio: toEmptyOrNumericString(ratio)})}/>
+            <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
+              <Button title="確認" onPress={this.onFinishEditMember} />
+              <Button title="取消" onPress={this.onCancelEditMember} />
+            </View>
           </View>
         </ModalWrapper>
         <DeleteConfirmDialog
@@ -70,7 +73,7 @@ export default class MembersView extends Component {
                 onPress={() => this.onClickMember(item.id, item.name, item.ratio)}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name + ' (' + item.ratio + ')'}</Text>
                 <View style={{margin: 8}}>
-                  <Button title="刪除" onPress={() => {this.onDeleteMember(item.id);}} />
+                  <Button title="刪除" color={BUTTON_COLOR} onPress={() => {this.onDeleteMember(item.id);}} />
                 </View>
               </TouchableOpacity>
           }

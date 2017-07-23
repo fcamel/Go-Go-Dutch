@@ -15,7 +15,7 @@ import ModalWrapper from 'react-native-modal-wrapper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import FileStore from './store';
-import styles from './styles';
+import styles, { NAVIGATION_BUTTON_COLOR, NAVIGATION_TINT_COLOR, BUTTON_COLOR } from './styles';
 import MembersView from './member';
 import ExpensesView from './expense';
 import SummaryView from './summary';
@@ -29,8 +29,10 @@ class TripListScreen extends Component {
     const {setParams} = navigation;
     return {
       title: '記帳本',
+      headerTitleStyle: styles.navigationHeaderTitle,
+      headerStyle: styles.navigationHeader,
       headerRight: (
-        <Button title='新增帳本' onPress={() => setParams({editTripVisible: true})} />
+        <Button title='新增帳本' color={NAVIGATION_BUTTON_COLOR} onPress={() => setParams({editTripVisible: true})} />
       ),
     };
   };
@@ -79,8 +81,8 @@ class TripListScreen extends Component {
                 onPress={() => this.onClickTrip(item.id, item.name)}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
                 <View style={{margin: 8, flexDirection: 'row', width: 100, justifyContent: 'space-around'}}>
-                  <Button title="編輯" onPress={() => {this.onEditTrip(item.id, item.name);}} />
-                  <Button title="刪除" onPress={() => {this.onDeleteTrip(item.id);}} />
+                  <Button title="編輯" color={BUTTON_COLOR} onPress={() => {this.onEditTrip(item.id, item.name);}} />
+                  <Button title="刪除" color={BUTTON_COLOR} onPress={() => {this.onDeleteTrip(item.id);}} />
                 </View>
               </TouchableOpacity>
           }
@@ -143,35 +145,39 @@ class TripContentScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state, setParams, navigate} = navigation;
     const {params} = state;
+    let headerRight = {};
     if (params.activeTab === TripContentMainView.Tabs.Members) {
-      return {
-        title: params.title,
-        headerRight: (
-          <Button title='新增成員' onPress={() => {
-            setParams({editorVisible: true});
-          }}/>
-        ),
-      };
+      headerRight = (
+        <Button title='新增成員' color={NAVIGATION_BUTTON_COLOR} onPress={() => {
+          setParams({editorVisible: true});
+        }}/>
+      );
     } else if (params.activeTab === TripContentMainView.Tabs.Expenses) {
-      return {
-        title: params.title,
-        headerRight: (
-          <Button title='新增消費' onPress={() => {
-            navigate('AddExpense', {
-              tripId: params.tripId,
-              title: params.title,
-              store: gStore,
-              notifyDataUpdated: params.notifyExpensesUpdated,
-            });
-          }}/>
-        ),
-      };
+      headerRight = (
+        <Button title='新增消費' color={NAVIGATION_BUTTON_COLOR} onPress={() => {
+          navigate('AddExpense', {
+            tripId: params.tripId,
+            title: params.title,
+            store: gStore,
+            notifyDataUpdated: params.notifyExpensesUpdated,
+          });
+        }}/>
+      );
     } else {
-      // TODO: export CSV.
-      return {
-        title: state.params.title,
-      };
+      headerRight = (
+        <Button title='匯出 CSV' color={NAVIGATION_BUTTON_COLOR} onPress={() => {
+          // TODO: export CSV.
+        }}/>
+      );
     }
+
+    return {
+      title: params.title,
+      headerTitleStyle: styles.navigationHeaderTitle,
+      headerStyle: styles.navigationHeader,
+      headerTintColor: NAVIGATION_TINT_COLOR,
+      headerRight,
+    };
   };
 
   constructor() {

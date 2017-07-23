@@ -15,7 +15,7 @@ import {
 import ModalWrapper from 'react-native-modal-wrapper';
 import SelectMultiple from 'react-native-select-multiple';
 
-import styles from './styles';
+import styles, { NAVIGATION_TINT_COLOR } from './styles';
 import { TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
 
 
@@ -51,8 +51,8 @@ export default class ExpensesView extends Component {
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
                 onPress={() => this.onClickExpense(item.id, item.name, item.cost, item.details)}>
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.cost}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.members.join(', ')}</Text>
+                <Text style={[styles.tableData, styles.tableDataNumber, {flex: 1}]}>{item.cost}</Text>
+                <Text style={[styles.tableData, {flex: 1, fontSize: 16}]}>{item.members.join(', ')}</Text>
               </TouchableOpacity>
           }
         />
@@ -125,6 +125,9 @@ class AddExpenseScreen extends Component {
     const {state } = navigation;
     return {
       title: state.params.title,
+      headerTitleStyle: styles.navigationHeaderTitle,
+      headerStyle: styles.navigationHeader,
+      headerTintColor: NAVIGATION_TINT_COLOR,
       headerRight: (
         <Button title='下一步' onPress={() => { state.params.onNext(); }}/>
       ),
@@ -307,6 +310,9 @@ class ExpenseDetailScreen extends Component {
     if (params.deleteExpenseButtonVisible) {
       return {
         title: title,
+        headerTitleStyle: styles.navigationHeaderTitle,
+        headerStyle: styles.navigationHeader,
+        headerTintColor: NAVIGATION_TINT_COLOR,
         headerRight: (
           <View style={{width: 100, flexDirection: 'row', justifyContent: 'space-around'}}>
             <Button title='刪除' onPress={() => {
@@ -323,6 +329,9 @@ class ExpenseDetailScreen extends Component {
     } else {
       return {
         title: title,
+        headerTitleStyle: styles.navigationHeaderTitle,
+        headerStyle: styles.navigationHeader,
+        headerTintColor: NAVIGATION_TINT_COLOR,
         headerRight: (
           <Button title='完成' onPress={() => {
             if (params.onEditingDone) {
@@ -393,7 +402,7 @@ class ExpenseDetailScreen extends Component {
           onRespond={this.onRespondDeleteExpense} />
 
         <View style={{paddingLeft: 10, paddingTop: 15, paddingBottom: 15}}>
-          <Text style={{paddingBottom: 10, fontSize: 30, fontWeight: 'bold', color: '#77c'}}>消費明細</Text>
+          <Text style={{paddingBottom: 10, fontSize: 30, fontWeight: 'bold', color: '#00a1d1'}}>消費明細</Text>
           <Text style={{fontSize: 12, color: '#777'}}>＊可點擊單列編輯金額</Text>
           <WarningMessage
             shouldPayVisible={this.state.warningShouldPayVisible}
@@ -406,9 +415,9 @@ class ExpenseDetailScreen extends Component {
             () =>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>成員</Text>
-                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>應付</Text>
-                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>已付</Text>
-                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>差額</Text>
+                <Text style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, {flex: 1}]}>應付</Text>
+                <Text style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, {flex: 1}]}>已付</Text>
+                <Text style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, {flex: 1}]}>差額</Text>
               </View>
           }
           renderItem={

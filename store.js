@@ -39,7 +39,7 @@ export default class DummyStore {
     this.addExpense(trip.id, { name: '午餐', cost: 1000, members, });
   }
 
-  addTrip(name) {
+  addTrip = (name) => {
     let id = this.nextTripId++;
     this.store.trips[id] = {
       key: id,
@@ -48,13 +48,13 @@ export default class DummyStore {
       members: {},
       expenses: {},
     };
-  }
+  };
 
-  updateTrip(id, name) {
+  updateTrip = (id, name) => {
     this.store.trips[id].name = name;
-  }
+  };
 
-  getTrips() {
+  getTrips = () => {
     let trips = [];
     for (let id in this.store.trips) {
       trips.push(this.store.trips[id]);
@@ -63,27 +63,27 @@ export default class DummyStore {
       return parseInt(a.id) - parseInt(b.id);
     });
     return trips;
-  }
+  };
 
-  deleteTrip(id) {
+  deleteTrip = (id) => {
     delete this.store.trips[id];
-  }
+  };
 
-  addMember(tripId, name, ratio) {
+  addMember = (tripId, name, ratio) => {
     this.updateMember(tripId, this.nextMemberId++, name, ratio);
-  }
+  };
 
-  updateMember(tripId, memberId, name, ratio) {
+  updateMember = (tripId, memberId, name, ratio) => {
     let trip = this.store.trips[tripId];
     trip.members[memberId] = { name, ratio };
-  }
+  };
 
-  deleteMember(tripId, memberId) {
+  deleteMember = (tripId, memberId) => {
     let trip = this.store.trips[tripId];
     delete trip.members[memberId];
-  }
+  };
 
-  getMembers(tripId) {
+  getMembers = (tripId) => {
     let members = [];
     if (!(tripId in this.store.trips)) {
       return members;
@@ -107,32 +107,32 @@ export default class DummyStore {
       return 0;
     });
     return members;
-  }
+  };
 
-  getMemberName(tripId, memberId) {
+  getMemberName = (tripId, memberId) => {
     for (let key in this.store.trips[tripId].members) {
       key = parseInt(key);
       if (key == memberId)
         return this.store.trips[tripId].members[key].name;
     }
     return '';
-  }
+  };
 
-  addExpense(tripId, expense) {
+  addExpense = (tripId, expense) => {
     this.updateExpense(tripId, this.nextExpenseId++, expense);
-  }
+  };
 
-  updateExpense(tripId, expenseId, expense) {
+  updateExpense = (tripId, expenseId, expense) => {
     let trip = this.store.trips[tripId];
     trip.expenses[expenseId] = expense;
-  }
+  };
 
-  deleteExpense(tripId, expenseId) {
+  deleteExpense = (tripId, expenseId) => {
     let trip = this.store.trips[tripId];
     delete trip.expenses[expenseId];
-  }
+  };
 
-  getExpenses(tripId) {
+  getExpenses = (tripId) => {
     let expenses = [];
     for (let key in this.store.trips[tripId].expenses) {
       key = parseInt(key);
@@ -152,9 +152,9 @@ export default class DummyStore {
       });
     }
     return expenses;
-  }
+  };
 
-  getSummary(tripId) {
+  getSummary = (tripId) => {
     let members = this.getMembers(tripId);
     let summary = {};
     for (let i = 0; i < members.length; i++) {
@@ -177,5 +177,5 @@ export default class DummyStore {
     }
     results.sort();
     return results;
-  }
+  };
 }

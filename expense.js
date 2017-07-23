@@ -250,6 +250,8 @@ class AddExpenseScreen extends Component {
       alert('請輸入有效的金額');
       return;
     }
+    // TODO: let the user have a chance to update the ratios of members
+    // ( i.e., add a new screen EditMemberRatioScreen ).
     for (let i = 0; i < members.length; i++) {
       let m = members[i];
       let memberId = m.id;

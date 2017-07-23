@@ -9,7 +9,8 @@ import styles from './styles';
 class TextField extends Component {
   render() {
     const {
-      name='', autoFocus=false, placeholder='', defaultValue='', keyboardType='default',
+      name='', autoFocus=false, placeholder='', value='', keyboardType='default',
+      onBlur=this.prop,
       updater,
     } = this.props;
 
@@ -20,12 +21,15 @@ class TextField extends Component {
           style={[styles.contentText, {width: 150}]}
           autoFocus={autoFocus}
           placeholder={placeholder}
-          defaultValue={defaultValue}
+          value={value}
           keyboardType={keyboardType}
+          onBlur={onBlur}
           onChangeText={updater} />
       </View>
     );
   }
+
+  nop = () => {};
 }
 
 class DeleteConfirmDialog extends Component {
@@ -47,4 +51,13 @@ class DeleteConfirmDialog extends Component {
   }
 }
 
-export { TextField, DeleteConfirmDialog };
+function toEmptyOrNumericString(str)
+{
+  let f = parseFloat(str);
+  console.log('XXX', str, f);
+  if (!isNaN(f) && isFinite(f))
+    return f.toString();
+  return '';
+}
+
+export { TextField, DeleteConfirmDialog, toEmptyOrNumericString };

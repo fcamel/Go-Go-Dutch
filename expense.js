@@ -16,7 +16,7 @@ import ModalWrapper from 'react-native-modal-wrapper';
 import SelectMultiple from 'react-native-select-multiple';
 
 import styles from './styles';
-import { TextField, DeleteConfirmDialog } from './utils';
+import { TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
 
 
 export default class ExpensesView extends Component {
@@ -81,11 +81,9 @@ export default class ExpensesView extends Component {
     //   }
     // }
     let expenseDetails = [];
-    console.log('onClickExpense', details);
     for (let memberId in details) {
       let r = details[memberId];
       memberId = parseInt(memberId);
-      console.log('onClickExpense', memberId, r);
       expenseDetails.push({
         key: memberId,
         memberId,
@@ -101,8 +99,6 @@ export default class ExpensesView extends Component {
         return 1;
       return 0;
     });
-
-    console.log('onClickExpense', expenseDetails);
 
     this.props.navigation.navigate('ExpenseDetail', {
       store: this.props.store,
@@ -138,7 +134,7 @@ class AddExpenseScreen extends Component {
   constructor() {
     super();
 
-    this.state = { name: '', cost: 0, payer: -1, selectedMembers: [] };
+    this.state = { name: '', cost: '0', payer: -1, selectedMembers: [] };
   }
 
   componentWillMount() {
@@ -166,13 +162,13 @@ class AddExpenseScreen extends Component {
           <TextField
             name={'名稱'}
             autoFocus={true}
-            defaultValue={this.state.name.toString()}
+            value={this.state.name.toString()}
             updater={(name) => this.setState({name})}/>
           <TextField
             name={'金額'}
-            defaultValue={this.state.cost.toString()}
+            value={this.state.cost}
             keyboardType={'numeric'}
-            updater={(cost) => this.setState({cost: parseFloat(cost)})}/>
+            updater={(cost) => this.setState({cost: toEmptyOrNumericString(cost)})}/>
           <View style={{flex: 1, flexDirection: 'row'}}>
             <Text style={[styles.contentText, {width: 100, height: 50, paddingTop: 15}]}>付費者</Text>
             <Picker
@@ -249,7 +245,11 @@ class AddExpenseScreen extends Component {
     }
 
     // Fill the data.
-    let cost = this.state.cost;
+    let cost = parseFloat(this.state.cost);
+    if (isNaN(cost)) {
+      alert('請輸入有效的金額');
+      return;
+    }
     for (let i = 0; i < members.length; i++) {
       let m = members[i];
       let memberId = m.id;
@@ -270,12 +270,11 @@ class AddExpenseScreen extends Component {
       return 0;
     });
 
-    console.log('WTF', expenseDetails);
     navigate('ExpenseDetail', {
       store: params.store,
       tripId: params.tripId,
       name: this.state.name,
-      cost: this.state.cost,
+      cost,
       expenseId: -1,
       expenseDetails,
       deleteExpenseButtonVisible: false,
@@ -363,14 +362,24 @@ class ExpenseDetailScreen extends Component {
             <TextField
               name={'應付'}
               autoFocus={true}
-              defaultValue={this.state.shouldPay.toString()}
+              value={this.state.shouldPay}
               keyboardType={'numeric'}
-              updater={(shouldPay) => this.setState({shouldPay: parseFloat(shouldPay)})}/>
+              onBlur={() => {
+                let f = parseFloat(this.state.shouldPay);
+                if (isNaN(f))
+                  this.setState({shouldPay: '0'});
+              }}
+              updater={(shouldPay) => this.setState({shouldPay: toEmptyOrNumericString(shouldPay)})}/>
             <TextField
               name={'已付'}
-              defaultValue={this.state.paid.toString()}
+              value={this.state.paid}
               keyboardType={'numeric'}
-              updater={(paid) => this.setState({paid: parseFloat(paid)})}/>
+              onBlur={() => {
+                let f = parseFloat(this.state.paid);
+                if (isNaN(f))
+                  this.setState({paid: '0'});
+              }}
+              updater={(paid) => this.setState({paid: toEmptyOrNumericString(paid)})}/>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
             <Button title="確認" onPress={() => this.onEditingMemberExpenseDone(true)} />
@@ -429,8 +438,8 @@ class ExpenseDetailScreen extends Component {
       // Editing data.
       memberId: -1,
       name: '',
-      shouldPay: 0,
-      paid: 0
+      shouldPay: '0',
+      paid: '0',
     };
   };
 
@@ -439,7 +448,12 @@ class ExpenseDetailScreen extends Component {
   }
 
   onClickExpenseMember(memberId, name, shouldPay, paid) {
-    this.setState({memberId, name, shouldPay, paid});
+    this.setState({
+      memberId,
+      name,
+      shouldPay: toEmptyOrNumericString(shouldPay),
+      paid: toEmptyOrNumericString(paid)
+    });
     this.props.navigation.setParams({editorVisible: true});
   }
 

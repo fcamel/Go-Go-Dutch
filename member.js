@@ -13,7 +13,7 @@ import {
 import ModalWrapper from 'react-native-modal-wrapper';
 
 import styles from './styles';
-import { TextField, DeleteConfirmDialog } from './utils';
+import { TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
 
 
 export default class MembersView extends Component {
@@ -32,15 +32,20 @@ export default class MembersView extends Component {
             name={'名稱'}
             autoFocus={true}
             placeholder={'阿土伯'}
-            defaultValue={this.state.name}
+            value={this.state.name}
             updater={(name) => this.setState({name})}/>
           <TextField
             name={'人數'}
             autoFocus={false}
             placeholder={''}
-            defaultValue={this.state.ratio.toString()}
+            value={this.state.ratio}
             keyboardType={'numeric'}
-            updater={(ratio) => this.setState({ratio: parseFloat(ratio)})}/>
+            onBlur={() => {
+              let f = parseFloat(this.state.ratio);
+              if (isNaN(f))
+                this.setState({ratio: '1'});
+            }}
+            updater={(ratio) => this.setState({ratio: toEmptyOrNumericString(ratio)})}/>
           <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
             <Button title="確認" onPress={this.onFinishEditMember} />
             <Button title="取消" onPress={this.onCancelEditMember} />
@@ -72,7 +77,7 @@ export default class MembersView extends Component {
   // Helper methods.
   //--------------------------------------------------------------------
   getInitialState() {
-    return { memberId: -1, name: '', ratio: 1, deleteMemberId: 0, };
+    return { memberId: -1, name: '', ratio: '1', deleteMemberId: 0, };
   }
   resetState() {
     this.setState(() => { return this.getInitialState(); });
@@ -81,7 +86,7 @@ export default class MembersView extends Component {
   onClickMember = (memberId, name, ratio) => {
     this.setState(() => {
       return {
-        memberId, name, ratio, deleteMemberId: 0,
+        memberId, name, ratio: toEmptyOrNumericString(ratio), deleteMemberId: 0,
       };
     });
     this.props.showEditor(true);

@@ -13,7 +13,7 @@ import {
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
 import ModalWrapper from 'react-native-modal-wrapper';
 
-import DummyStore from './store';
+import FileStore from './store';
 import styles from './styles';
 import MembersView from './member';
 import ExpensesView from './expense';
@@ -21,7 +21,7 @@ import SummaryView from './summary';
 import { DeleteConfirmDialog } from './utils';
 
 
-let gStore = new DummyStore();
+let gStore = new FileStore();
 
 class TripListScreen extends Component {
   static navigationOptions = ({ navigation }) => {
@@ -36,8 +36,12 @@ class TripListScreen extends Component {
 
   constructor() {
     super();
+    this.state = { id: -1, name: '', dataUpdateDetector: {} };
     this.store = gStore;
-    this.state = { id: -1, name: '' };
+    this.store.setReadyCallback(() => {
+      console.log('XXX store is ready', this.store.isReady());
+      this.setState({dataUpdateDetector: {}});
+    });
   }
 
   render() {
@@ -66,7 +70,8 @@ class TripListScreen extends Component {
 
         <FlatList
           style={{flex: 1}}
-          data={this.store.getTrips()}
+          data={this.store.isReady() ? this.store.getTrips() : []}
+          extraData={this.state.dataUpdateDetector}
           renderItem={
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
@@ -92,6 +97,14 @@ class TripListScreen extends Component {
   }
 
   onFinishEditTrip(done) {
+    if (!this.store.isReady()) {
+      // Retry after 1s.
+      setTimeout(() => {
+        this.onFinishEditTrip(done);
+      }, 1000);
+      return;
+    }
+
     if (done && this.state.name.length > 0) {
       if (this.state.id > 0) {
         this.store.updateTrip(this.state.id, this.state.name);

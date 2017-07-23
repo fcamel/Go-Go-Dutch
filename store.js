@@ -1,63 +1,69 @@
 'use strict';
 
+import RNFS from 'react-native-fs';
 
-// TODO(fcamel): Rewrite it with real data stored in files.
-// For early development.
-export default class DummyStore {
+
+let gTest = false;
+
+export default class FileStore {
   constructor() {
-    // Fill dumy trips.
-    this.nextTripId = 1;
-    this.store = {};
-    this.store.trips = {};
-    this.addTrip('Germany 2015/06/11');
-    this.addTrip('Japan 2017/01/07');
-    this.addTrip('Taipei 2016/01/13');
-    this.addTrip('Taipei 2017/07/28');
+    this._initialized = false;
+    this._readyCallback = null;
 
-    // Fill dummy members.
-    this.nextMemberId = 1;
-    let trip = this.getTrips()[0];
-    this.addMember(trip.id, '吉吉', 1);
-    this.addMember(trip.id, '小小兵', 2);
-    this.addMember(trip.id, '三眼怪', 3);
+    this._nextTripId = this._nextMemberId = this._nextExpenseId = 1;
+    this._store = {};
+    this._store.trips = {};
 
-    // Fill dummy expenses.
-    this.nextExpenseId = 1;
-    let ms = this.getMembers(trip.id);
-    let members = {};
-    members[ms[0].id] = { paid: 0, shouldPay: 2000, };
-    members[ms[1].id] = { paid: 0, shouldPay: 1000, };
-    members[ms[2].id] = { paid: 5000, shouldPay: 2000, };
-    this.addExpense(trip.id, { name: '飯店', cost: 5000, members, });
-    members = {};
-    members[ms[0].id] = { paid: 2000, shouldPay: 1000, };
-    members[ms[2].id] = { paid: 0, shouldPay: 1000, };
-    this.addExpense(trip.id, { name: '租車', cost: 2000, members, });
-    members = {};
-    members[ms[1].id] = { paid: 800, shouldPay: 500, };
-    members[ms[2].id] = { paid: 200, shouldPay: 500, };
-    this.addExpense(trip.id, { name: '午餐', cost: 1000, members, });
+    if (gTest) {
+      this._fillDummyData();
+      this._initialized = true;
+    } else {
+      this._tripPathPrefix = 'trip';
+      this._loadFromPersistentStore();
+    }
   }
 
+  //----------------------------------------------------------
+  // Public API.
+  //----------------------------------------------------------
+  setReadyCallback = (callback) => {
+    this._readyCallback = callback;
+  };
+
+  isReady = () => {
+    return this._initialized;
+  };
+
   addTrip = (name) => {
-    let id = this.nextTripId++;
-    this.store.trips[id] = {
+    this._check();
+
+    let id = this._nextTripId++;
+    this._store.trips[id] = {
       key: id,
       id,
       name,
       members: {},
       expenses: {},
     };
+
+    this._syncToPersistentStore(true, id);
   };
 
   updateTrip = (id, name) => {
-    this.store.trips[id].name = name;
+    this._check();
+
+    this._store.trips[id].name = name;
+
+    this._syncToPersistentStore(false, id);
   };
 
   getTrips = () => {
+    console.log('XXX getTrips');
+    this._check();
+
     let trips = [];
-    for (let id in this.store.trips) {
-      trips.push(this.store.trips[id]);
+    for (let id in this._store.trips) {
+      trips.push(this._store.trips[id]);
     }
     trips.sort(function (a, b) {
       return parseInt(a.id) - parseInt(b.id);
@@ -66,32 +72,50 @@ export default class DummyStore {
   };
 
   deleteTrip = (id) => {
-    delete this.store.trips[id];
+    this._check();
+
+    delete this._store.trips[id];
+
+    this._syncToPersistentStore(false, id);
   };
 
   addMember = (tripId, name, ratio) => {
-    this.updateMember(tripId, this.nextMemberId++, name, ratio);
+    this._check();
+
+    this.updateMember(tripId, this._nextMemberId++, name, ratio);
+
+    this._syncToPersistentStore(true, tripId);
   };
 
   updateMember = (tripId, memberId, name, ratio) => {
-    let trip = this.store.trips[tripId];
+    this._check();
+
+    let trip = this._store.trips[tripId];
     trip.members[memberId] = { name, ratio };
+
+    this._syncToPersistentStore(false, tripId);
   };
 
   deleteMember = (tripId, memberId) => {
-    let trip = this.store.trips[tripId];
+    this._check();
+
+    let trip = this._store.trips[tripId];
     delete trip.members[memberId];
+
+    this._syncToPersistentStore(false, tripId);
   };
 
   getMembers = (tripId) => {
+    this._check();
+
     let members = [];
-    if (!(tripId in this.store.trips)) {
+    if (!(tripId in this._store.trips)) {
       return members;
     }
 
-    for (let key in this.store.trips[tripId].members) {
+    for (let key in this._store.trips[tripId].members) {
       key = parseInt(key);
-      let m = this.store.trips[tripId].members[key];
+      let m = this._store.trips[tripId].members[key];
       members.push({
         key: key,
         id: key,
@@ -110,33 +134,49 @@ export default class DummyStore {
   };
 
   getMemberName = (tripId, memberId) => {
-    for (let key in this.store.trips[tripId].members) {
+    this._check();
+
+    for (let key in this._store.trips[tripId].members) {
       key = parseInt(key);
       if (key == memberId)
-        return this.store.trips[tripId].members[key].name;
+        return this._store.trips[tripId].members[key].name;
     }
     return '';
   };
 
   addExpense = (tripId, expense) => {
-    this.updateExpense(tripId, this.nextExpenseId++, expense);
+    this._check();
+
+    this.updateExpense(tripId, this._nextExpenseId++, expense);
+
+    this._syncToPersistentStore(true, tripId);
   };
 
   updateExpense = (tripId, expenseId, expense) => {
-    let trip = this.store.trips[tripId];
+    this._check();
+
+    let trip = this._store.trips[tripId];
     trip.expenses[expenseId] = expense;
+
+    this._syncToPersistentStore(false, tripId);
   };
 
   deleteExpense = (tripId, expenseId) => {
-    let trip = this.store.trips[tripId];
+    this._check();
+
+    let trip = this._store.trips[tripId];
     delete trip.expenses[expenseId];
+
+    this._syncToPersistentStore(false, tripId);
   };
 
   getExpenses = (tripId) => {
+    this._check();
+
     let expenses = [];
-    for (let key in this.store.trips[tripId].expenses) {
+    for (let key in this._store.trips[tripId].expenses) {
       key = parseInt(key);
-      let e = this.store.trips[tripId].expenses[key];
+      let e = this._store.trips[tripId].expenses[key];
       let members = [];
       for (let memberId in e.members) {
         members.push(this.getMemberName(tripId, memberId));
@@ -155,6 +195,8 @@ export default class DummyStore {
   };
 
   getSummary = (tripId) => {
+    this._check();
+
     let members = this.getMembers(tripId);
     let summary = {};
     for (let i = 0; i < members.length; i++) {
@@ -162,9 +204,9 @@ export default class DummyStore {
       summary[m.id] = { key: m.id, member_id: m.id, name: m.name, paid: 0, shouldPay: 0 };
     }
 
-    for (let key in this.store.trips[tripId].expenses) {
+    for (let key in this._store.trips[tripId].expenses) {
       key = parseInt(key);
-      let e = this.store.trips[tripId].expenses[key];
+      let e = this._store.trips[tripId].expenses[key];
       for (let member_id in e.members) {
         summary[member_id].paid += e.members[member_id].paid;
         summary[member_id].shouldPay += e.members[member_id].shouldPay;
@@ -177,5 +219,162 @@ export default class DummyStore {
     }
     results.sort();
     return results;
+  };
+
+  //----------------------------------------------------------
+  // Private API.
+  //----------------------------------------------------------
+  _fillDummyData = () => {
+    // Fill dumy trips.
+    this.addTrip('Germany 2015/06/11');
+    this.addTrip('Japan 2017/01/07');
+    this.addTrip('Taipei 2016/01/13');
+    this.addTrip('Taipei 2017/07/28');
+
+    // Fill dummy members.
+    let trip = this.getTrips()[0];
+    this.addMember(trip.id, '吉吉', 1);
+    this.addMember(trip.id, '小小兵', 2);
+    this.addMember(trip.id, '三眼怪', 3);
+
+    // Fill dummy expenses.
+    let ms = this.getMembers(trip.id);
+    let members = {};
+    members[ms[0].id] = { paid: 0, shouldPay: 2000, };
+    members[ms[1].id] = { paid: 0, shouldPay: 1000, };
+    members[ms[2].id] = { paid: 5000, shouldPay: 2000, };
+    this.addExpense(trip.id, { name: '飯店', cost: 5000, members, });
+    members = {};
+    members[ms[0].id] = { paid: 2000, shouldPay: 1000, };
+    members[ms[2].id] = { paid: 0, shouldPay: 1000, };
+    this.addExpense(trip.id, { name: '租車', cost: 2000, members, });
+    members = {};
+    members[ms[1].id] = { paid: 800, shouldPay: 500, };
+    members[ms[2].id] = { paid: 200, shouldPay: 500, };
+    this.addExpense(trip.id, { name: '午餐', cost: 1000, members, });
+  };
+
+  _check = () => {
+    if (!this._initialized) {
+      throw 'ERROR: FileStore has not been initialized!';
+    }
+  };
+
+
+  _metaPath = () => {
+    return RNFS.DocumentDirectoryPath + '/meta';
+  };
+
+  _tripPath = (tripId) => {
+    return RNFS.DocumentDirectoryPath + '/trip' + tripId.toString();
+  };
+
+  _loadFromPersistentStore = () => {
+    console.log('XXX _loadFromPersistentStore');
+    RNFS.exists(this._metaPath())
+      .then((existed) => {
+        console.log('XXX meta existed', existed);
+        if (!existed) {
+          // The first time.
+          let meta = {
+            _nextTripId: 1,
+            _nextMemberId: 1,
+            _nextExpenseId: 1,
+          };
+          RNFS.writeFile(this._metaPath(), JSON.stringify(meta), 'utf8')
+            .then(() => {
+              console.log('XXX writeFile');
+              // Restart.
+              this._loadFromPersistentStore();
+            })
+            .catch((error) => {
+              alert(`ERROR: _loadFromPersistentStore: Failed to write meta (${error}).`);
+            });
+          return;
+        }
+
+        this._loadTripsFromPersistentStore();
+      });
+  }
+
+  _loadTripsFromPersistentStore = () => {
+    RNFS.readFile(this._metaPath(), 'utf8')
+      .then((content) => {
+        // Load the meta.
+        let meta = JSON.parse(content);
+        this._nextTripId = meta._nextTripId;
+        this._nextMemberId = meta._nextMemberId;
+        this._nextExpenseId = meta._nextExpenseId;
+        console.log('XXX meta', meta);
+
+        let promises = [];
+        for (let i = 1; i < this._nextTripId; i++) {
+          let path = this._tripPath(i);
+          let p = RNFS.exists(path)
+            .then((existed) => {
+              return existed ? path : '';
+            }).then((path) => {
+              if (path) {
+                return RNFS.readFile(path, 'utf8');
+              }
+              return '';
+            }).then((content) => {
+              if (content) {
+                this._store.trips[i] = JSON.parse(content);
+              }
+            }).catch((error) => {
+              alert(`ERROR: _loadTripsFromPersistentStore: Failed to load trip id=${i} (${error}).`);
+            });
+          promises.push(p);
+        }
+
+        Promise.all(promises)
+          .then(() => {
+            this._initialized = true;
+            if (this._readyCallback) {
+              try {
+                this._readyCallback();
+              } catch (error) {
+                alert(`ERROR: _loadTripsFromPersistentStore: Failed to run the ready callback (${error}).`);
+              }
+            }
+          }).catch((error) => {
+            alert(`ERROR: _loadTripsFromPersistentStore: Failed to load trips (${error}).`);
+          });
+      })
+      .catch((error) => {
+        alert(`ERROR: _loadTripsFromPersistentStore: Failed to load meta (${error}).`);
+      });
+  };
+
+  _syncToPersistentStore = (updateMeta, tripId) => {
+    if (gTest)
+      return;
+
+    if (updateMeta) {
+      let meta = {
+        _nextTripId: this._nextTripId,
+        _nextMemberId: this._nextMemberId,
+        _nextExpenseId: this._nextExpenseId,
+      };
+      RNFS.writeFile(this._metaPath(), JSON.stringify(meta), 'utf8')
+        .then(() => {
+          console.log('XXX updateMeta');
+          // Restart.
+          this._loadFromPersistentStore();
+        })
+        .catch((error) => {
+          alert(`ERROR: Failed to update meta (${error}).`);
+        });
+    }
+
+    RNFS.writeFile(this._tripPath(tripId), JSON.stringify(this._store.trips[tripId]), 'utf8')
+      .then(() => {
+        // Do nothing.
+        console.log('XXX updateMeta');
+      })
+      .catch((error) => {
+        alert(`ERROR: Failed to update trip ${tripId} (${error}).`);
+      });
   };
 }

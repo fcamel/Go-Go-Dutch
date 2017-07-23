@@ -200,6 +200,8 @@ class TripContentScreen extends Component {
       this.props.navigation.setParams({editorVisible: visible});
     };
 
+    // NOTE: BottomNavigation doesn't occupy the height, so there is an empty View
+    // to occupy the same space; otherwise, BottomNavigation will cover the last row of data.
     return (
       <View style={styles.baseView}>
         <TripContentMainView
@@ -210,6 +212,7 @@ class TripContentScreen extends Component {
           showEditor={showEditor}
           setNotifyExpensesUpdated={this.setNotifyExpensesUpdated}
           editorVisible={editorVisible} />
+        <View style={{ height: 56 }} />
         <BottomNavigation
           activeTab={params.activeTab}
           labelColor="white"

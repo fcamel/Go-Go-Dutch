@@ -25,7 +25,13 @@ export default class ExpensesView extends Component {
     this.state = this.getInitialState();
   }
 
+  componentWillMount() {
+    // Let the upper view can notify this that the data are updated.
+    this.props.setNotifyExpensesUpdated(this.notifyDataUpdated);
+  }
+
   render() {
+    // About the extraData: See the comments about navigation flow in ExpenseDetailScreen.
     return (
       <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
         <FlatList
@@ -108,9 +114,13 @@ export default class ExpensesView extends Component {
       deleteExpenseButtonVisible: true,
       editorVisible: false,
       deleteExpenseId: -1,
-      notifyDataUpdated: () => { this.setState({dataUpdateDetector: {}}); }
+      notifyDataUpdated: this.notifyDataUpdated,
     });
   }
+
+  notifyDataUpdated = () => {
+    this.setState({dataUpdateDetector: {}});
+  };
 }
 
 
@@ -201,7 +211,6 @@ class AddExpenseScreen extends Component {
     Keyboard.dismiss();
 
     // Prepare the data.
-    console.log('XXX', this.state.payer, this.state.selectedMembers);
     let expenseDetails = [];
     let selectedMembers = {};
     for (let i = 0; i < this.state.selectedMembers.length; i++) {
@@ -239,7 +248,6 @@ class AddExpenseScreen extends Component {
       ratioTotal += members[i].ratio;
     }
 
-    console.log('XXX 2', members, ratioTotal);
     // Fill the data.
     let cost = this.state.cost;
     for (let i = 0; i < members.length; i++) {
@@ -273,9 +281,7 @@ class AddExpenseScreen extends Component {
       deleteExpenseButtonVisible: false,
       editorVisible: false,
       deleteExpenseId: -1,
-      notifyDataUpdated: () => {
-        // TODO
-      },
+      notifyDataUpdated: params.notifyDataUpdated,
       // This is used to go back to TripContentScreen directly.
       navigationBackKey: this.props.navigation.state.key,
     });
@@ -283,6 +289,15 @@ class AddExpenseScreen extends Component {
 }
 
 
+// Navigation flow:
+//
+// * Update
+// TripContentScreen o-> TripContentMainView o-> ExpensesView
+//   => ExpenseDetailScreen => TripContentScreen
+//
+// * Add
+// TripContentScreen o-> navigation's right header
+//  => AddExpenseScreen => ExpenseDetailScreen => TripContentScreen
 class ExpenseDetailScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const { setParams } = navigation;
@@ -489,7 +504,10 @@ class ExpenseDetailScreen extends Component {
       goBack();
     } else {
       // New data.
-      // TODO
+      var expense = { name: params.name, cost: params.cost, members };
+      params.store.addExpense(params.tripId, expense);
+
+      // Go back to the last last page.
       params.notifyDataUpdated();
       goBack(params.navigationBackKey);
     }

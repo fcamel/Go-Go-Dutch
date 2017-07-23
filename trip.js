@@ -147,6 +147,7 @@ class TripContentScreen extends Component {
               tripId: params.tripId,
               title: params.title,
               store: gStore,
+              notifyDataUpdated: params.notifyExpensesUpdated,
             });
           }}/>
         ),
@@ -162,7 +163,12 @@ class TripContentScreen extends Component {
   constructor() {
     super();
     this.store = gStore;
-    this.resetState();
+    this.state = { notifyExpensesUpdated: {}};
+  }
+
+  componentWillMount() {
+    const { setParams } = this.props.navigation;
+    setParams({notifyExpensesUpdated: this.onExpensesUpdated});
   }
 
   render() {
@@ -182,6 +188,7 @@ class TripContentScreen extends Component {
           tripId={params.tripId}
           activeTab={params.activeTab}
           showEditor={showEditor}
+          setNotifyExpensesUpdated={this.setNotifyExpensesUpdated}
           editorVisible={editorVisible} />
         <BottomNavigation
           activeTab={params.activeTab}
@@ -218,8 +225,12 @@ class TripContentScreen extends Component {
   //--------------------------------------------------------------------
   // Helper methods.
   //--------------------------------------------------------------------
-  resetState() {
-    this.state = {};
+  onExpensesUpdated = () => {
+    this.state.notifyExpensesUpdated();
+  };
+
+  setNotifyExpensesUpdated = (func) => {
+    this.state.notifyExpensesUpdated = func;
   }
 }
 
@@ -248,7 +259,8 @@ class TripContentMainView extends Component {
           navigation={this.props.navigation}
           tripId={this.props.tripId}
           showEditor={this.props.showEditor}
-          editorVisible={this.props.editorVisible} />
+          editorVisible={this.props.editorVisible}
+          setNotifyExpensesUpdated={this.props.setNotifyExpensesUpdated} />
       );
     } else {
       return (

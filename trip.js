@@ -128,23 +128,24 @@ class TripListScreen extends Component {
 class TripContentScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const {state, setParams, navigate} = navigation;
-    if (state.params.activeTab === TripContentMainView.Tabs.Members) {
+    const {params} = state;
+    if (params.activeTab === TripContentMainView.Tabs.Members) {
       return {
-        title: state.params.title,
+        title: params.title,
         headerRight: (
           <Button title='新增成員' onPress={() => {
             setParams({editorVisible: true});
           }}/>
         ),
       };
-    } else if (state.params.activeTab === TripContentMainView.Tabs.Expenses) {
+    } else if (params.activeTab === TripContentMainView.Tabs.Expenses) {
       return {
-        title: state.params.title,
+        title: params.title,
         headerRight: (
           <Button title='新增消費' onPress={() => {
             navigate('AddExpense', {
-              tripId: state.params.tripId,
-              title: state.params.title,
+              tripId: params.tripId,
+              title: params.title,
               store: gStore,
             });
           }}/>

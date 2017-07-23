@@ -58,11 +58,17 @@ export default class MembersView extends Component {
         <FlatList
           style={{flex: 1}}
           data={this.props.store.getMembers(this.props.tripId)}
+          ListHeaderComponent={
+            () =>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>成員</Text>
+              </View>
+          }
           renderItem={
             ({item}) =>
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
                 onPress={() => this.onClickMember(item.id, item.name, item.ratio)}>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.name + '(' + item.ratio + ')'}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{item.name + ' (' + item.ratio + ')'}</Text>
                 <View style={{margin: 8}}>
                   <Button title="刪除" onPress={() => {this.onDeleteMember(item.id);}} />
                 </View>

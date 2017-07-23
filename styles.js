@@ -19,10 +19,12 @@ export default StyleSheet.create({
     paddingBottom: 6,
   },
   tableData: {
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'left',
     textAlignVertical: 'center',
     paddingLeft: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
   bottomMenuItem: {
     fontSize: 28,

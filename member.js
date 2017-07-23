@@ -24,7 +24,7 @@ export default class MembersView extends Component {
 
   render() {
     return (
-      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+      <View style={styles.baseView}>
         <ModalWrapper
           style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
           visible={this.props.editorVisible}>

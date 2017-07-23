@@ -50,7 +50,7 @@ class TripListScreen extends Component {
     const params = this.props.navigation.state.params ? this.props.navigation.state.params : {};
 
     return (
-      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+      <View style={styles.baseView}>
         <ModalWrapper
           style={{ width: 280, height: 180, paddingLeft: 24, paddingRight: 24 }}
           visible={!!params.editTripVisible}>
@@ -195,7 +195,7 @@ class TripContentScreen extends Component {
     };
 
     return (
-      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+      <View style={styles.baseView}>
         <TripContentMainView
           store={this.store}
           navigation={this.props.navigation}

@@ -4,6 +4,10 @@
 import { Dimensions, StyleSheet, } from 'react-native';
 
 export default StyleSheet.create({
+  baseView: {
+    flex: 1,
+    backgroundColor: '#f5fcff',
+  },
   contentText: {
     fontSize: 16,
   },

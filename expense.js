@@ -33,7 +33,7 @@ export default class ExpensesView extends Component {
   render() {
     // About the extraData: See the comments about navigation flow in ExpenseDetailScreen.
     return (
-      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+      <View style={styles.baseView}>
         <FlatList
           style={{flex: 1}}
           data={this.props.store.getExpenses(this.props.tripId)}
@@ -156,7 +156,7 @@ class AddExpenseScreen extends Component {
     members.sort();
 
     return (
-      <ScrollView style={{flex: 1, backgroundColor: '#f5fcff', paddingTop: 20, paddingLeft: 20,}}>
+      <ScrollView style={[styles.baseView, {paddingTop: 20, paddingLeft: 20}]}>
         <Text style={{fontSize: 30, paddingBottom: 10}}>輸入消費資訊：</Text>
         <View style={{paddingLeft: 10}}>
           <TextField
@@ -184,7 +184,7 @@ class AddExpenseScreen extends Component {
             <SelectMultiple
               style={{height: 300}}
               labelStyle={styles.contentText}
-              rowStyle={{width: 300, backgroundColor: '#f5fcff'}}
+              rowStyle={[styles.baseView, {width: 300}]}
               checkboxStyle={{width: 16, height: 16}}
               items={members}
               selectedItems={this.state.selectedMembers}
@@ -353,7 +353,7 @@ class ExpenseDetailScreen extends Component {
     const { params } = this.props.navigation.state;
 
     return (
-      <View style={{flex: 1, backgroundColor: '#f5fcff'}}>
+      <View style={styles.baseView}>
         <ModalWrapper
           style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
           visible={params.editorVisible}>

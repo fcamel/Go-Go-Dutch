@@ -271,7 +271,9 @@ class EditMemberRatioScreen extends Component {
     this.state.selectedMembers = [];
     for (let i = 0; i < params.selectedMembers.length; i++) {
       let memberId = parseInt(params.selectedMembers[i].value);
-      this.state.selectedMembers.push(allMembers[memberId]);
+      let m = allMembers[memberId];
+      m.defaultRatio = m.ratio;
+      this.state.selectedMembers.push(m);
     }
     this.state.selectedMembers.sort(function(a, b) {
       if (a.name < b.name)
@@ -291,10 +293,22 @@ class EditMemberRatioScreen extends Component {
             style={[styles.contentText, {flex: 1}]}
             value={toEmptyOrNumericString(m.ratio)}
             keyboardType={'numeric'}
+            onBlur={
+              () => {
+                let f = parseFloat(m.ratio);
+                if (isNaN(f) || f < 0) {
+                  this.setState((previous) => {
+                    previous.selectedMembers[i].ratio = m.defaultRatio;
+                    return previous;
+                  });
+                }
+              }
+            }
             onChangeText={
               (ratio) => {
                 this.setState((previous) => {
-                  previous.selectedMembers[i].ratio = parseFloat(ratio);
+                  let f = parseFloat(ratio);
+                  previous.selectedMembers[i].ratio = isNaN(f) ? '' : f;
                   return previous;
                 });
               }
@@ -318,6 +332,8 @@ class EditMemberRatioScreen extends Component {
   onNext = () => {
     const { params } = this.props.navigation.state;
     const { navigate } = this.props.navigation;
+
+    Keyboard.dismiss();
 
     // Prepare the data.
     let expenseDetails = [];
@@ -349,9 +365,12 @@ class EditMemberRatioScreen extends Component {
 
     let ratioTotal = 0;
     for (let i = 0; i < members.length; i++) {
-      ratioTotal += members[i].ratio;
+      let m = members[i];
+      m.ratio = parseFloat(m.ratio);
+      if (isNaN(m.ratio))
+        m.ratio = m.defaultRatio;
+      ratioTotal += m.ratio;
     }
-    console.log('ZZZ', ratioTotal, members);
 
     // Fill the data.
     for (let i = 0; i < members.length; i++) {

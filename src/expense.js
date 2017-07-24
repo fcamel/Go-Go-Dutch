@@ -526,7 +526,7 @@ class ExpenseDetailScreen extends Component {
                 <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
                 <Text style={[styles.tableData, {flex: 1}]}>{Number(item.shouldPay).toFixed(1)}</Text>
                 <Text style={[styles.tableData, {flex: 1}]}>{Number(item.paid).toFixed(1)}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{Number(item.shouldPay - item.paid).toFixed(1)}</Text>
+                <Text style={[styles.tableData, {flex: 1}]}>{Number(item.paid - item.shouldPay).toFixed(1)}</Text>
               </TouchableOpacity>
           }
         />

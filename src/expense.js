@@ -8,6 +8,7 @@ import {
   Picker,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -202,6 +203,17 @@ class AddExpenseScreen extends Component {
     const { params } = this.props.navigation.state;
     const { navigate } = this.props.navigation;
 
+    if (this.state.name.length <= 0) {
+      alert('請輸入名稱');
+      return;
+    }
+
+    let cost = parseFloat(this.state.cost);
+    if (isNaN(cost)) {
+      alert('請輸入有效的金額');
+      return;
+    }
+
     if (this.state.selectedMembers.length <= 0) {
       alert('請選擇拆帳成員');
       return;
@@ -209,23 +221,116 @@ class AddExpenseScreen extends Component {
 
     Keyboard.dismiss();
 
+    navigate('EditMemberRatio', {
+      store: params.store,
+      tripId: params.tripId,
+      name: this.state.name,
+      cost,
+      payer: this.state.payer,
+      selectedMembers: this.state.selectedMembers,
+      notifyDataUpdated: params.notifyDataUpdated,
+      // This is used to go back to TripContentScreen directly.
+      navigationBackKey: this.props.navigation.state.key,
+    });
+  }
+}
+
+
+class EditMemberRatioScreen extends Component {
+  static navigationOptions = ({ navigation }) => {
+    const {state } = navigation;
+    return {
+      title: state.params.title,
+      headerTitleStyle: styles.navigationHeaderTitle,
+      headerStyle: styles.navigationHeader,
+      headerTintColor: NAVIGATION_TINT_COLOR,
+      headerRight: (
+        <Button title='下一步' onPress={() => { state.params.onNext(); }}/>
+      ),
+    };
+  };
+
+  constructor() {
+    super();
+
+    this.state = {};
+  }
+
+  componentWillMount() {
+    const { setParams, state } = this.props.navigation;
+    const { params } = state;
+    setParams({onNext: this.onNext});
+
+    let allMembersList = params.store.getMembers(params.tripId);
+    let allMembers = {};
+    for (let i = 0; i < allMembersList.length; i++) {
+      let m = allMembersList[i];
+      allMembers[m.id] = m;
+    }
+
+    this.state.selectedMembers = [];
+    for (let i = 0; i < params.selectedMembers.length; i++) {
+      let memberId = parseInt(params.selectedMembers[i].value);
+      this.state.selectedMembers.push(allMembers[memberId]);
+    }
+    this.state.selectedMembers.sort(function(a, b) {
+      if (a.name < b.name)
+        return -1;
+      if (a.name > b.name)
+        return 1;
+      return 0;
+    });
+  }
+
+  render() {
+    let rows = this.state.selectedMembers.map((m, i) => {
+      return (
+        <View style={{flexDirection: 'row'}} key={m.id}>
+          <Text style={[styles.contentText, {flex: 1, textAlignVertical: 'center', paddingLeft: 20}]}>{m.name}</Text>
+          <TextInput
+            style={[styles.contentText, {flex: 1}]}
+            value={toEmptyOrNumericString(m.ratio)}
+            keyboardType={'numeric'}
+            onChangeText={
+              (ratio) => {
+                this.setState((previous) => {
+                  previous.selectedMembers[i].ratio = parseFloat(ratio);
+                  return previous;
+                });
+              }
+            } />
+        </View>
+      );
+    });
+
+    return (
+      <ScrollView style={styles.baseView, {paddingTop: 20}}>
+        <Text style={{fontSize: 30, paddingBottom: 10, paddingLeft: 20}}>設定拆帳比例：</Text>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>拆帳成員</Text>
+          <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>比例 (人數)</Text>
+        </View>
+        {rows}
+      </ScrollView>
+    );
+  }
+
+  onNext = () => {
+    const { params } = this.props.navigation.state;
+    const { navigate } = this.props.navigation;
+
     // Prepare the data.
     let expenseDetails = [];
-    let selectedMembers = {};
-    for (let i = 0; i < this.state.selectedMembers.length; i++) {
-      let m = this.state.selectedMembers[i];
-      selectedMembers[m.value] = m.label;
-    }
     let allMembers = params.store.getMembers(params.tripId);
-    let members = [];
+    let members = this.state.selectedMembers;
     let payer = {};
-    let payerId = this.state.payer;
+    let payerId = params.payer;
     for (let i = 0; i < allMembers.length; i++) {
       let m = allMembers[i];
-      if (m.id === payerId)
+      if (m.id === payerId) {
         payer = m;
-      if (m.id in selectedMembers)
-        members.push(m);
+        break;
+      }
     }
 
     if (payerId > 0) {
@@ -246,15 +351,9 @@ class AddExpenseScreen extends Component {
     for (let i = 0; i < members.length; i++) {
       ratioTotal += members[i].ratio;
     }
+    console.log('ZZZ', ratioTotal, members);
 
     // Fill the data.
-    let cost = parseFloat(this.state.cost);
-    if (isNaN(cost)) {
-      alert('請輸入有效的金額');
-      return;
-    }
-    // TODO: let the user have a chance to update the ratios of members
-    // ( i.e., add a new screen EditMemberRatioScreen ).
     for (let i = 0; i < members.length; i++) {
       let m = members[i];
       let memberId = m.id;
@@ -262,8 +361,8 @@ class AddExpenseScreen extends Component {
         key: memberId,
         memberId,
         name: m.name,
-        paid: memberId === payerId ? cost : 0,
-        shouldPay: cost * m.ratio / ratioTotal,
+        paid: memberId === payerId ? params.cost : 0,
+        shouldPay: params.cost * m.ratio / ratioTotal,
       });
     }
 
@@ -278,8 +377,8 @@ class AddExpenseScreen extends Component {
     navigate('ExpenseDetail', {
       store: params.store,
       tripId: params.tripId,
-      name: this.state.name,
-      cost,
+      name: params.name,
+      cost: params.cost,
       expenseId: -1,
       expenseDetails,
       deleteExpenseButtonVisible: false,
@@ -287,7 +386,7 @@ class AddExpenseScreen extends Component {
       deleteExpenseId: -1,
       notifyDataUpdated: params.notifyDataUpdated,
       // This is used to go back to TripContentScreen directly.
-      navigationBackKey: this.props.navigation.state.key,
+      navigationBackKey: params.navigationBackKey,
     });
   }
 }
@@ -301,7 +400,7 @@ class AddExpenseScreen extends Component {
 //
 // * Add
 // TripContentScreen o-> navigation's right header
-//  => AddExpenseScreen => ExpenseDetailScreen => TripContentScreen
+//  => AddExpenseScreen => EditMemberRatioScreen => ExpenseDetailScreen => TripContentScreen
 class ExpenseDetailScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const { setParams } = navigation;
@@ -584,4 +683,4 @@ class WarningMessage extends Component
   }
 }
 
-export { AddExpenseScreen, ExpenseDetailScreen };
+export { AddExpenseScreen, EditMemberRatioScreen, ExpenseDetailScreen };

@@ -5,7 +5,7 @@ import { AppRegistry } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
 import { TripListScreen, TripContentScreen } from './trip';
-import { AddExpenseScreen, ExpenseDetailScreen } from './expense';
+import { AddExpenseScreen, EditMemberRatioScreen, ExpenseDetailScreen } from './expense';
 
 
 export default function() {
@@ -13,6 +13,7 @@ export default function() {
     Home: { screen: TripListScreen, },
     Trip: { screen: TripContentScreen, },
     AddExpense: { screen: AddExpenseScreen, },
+    EditMemberRatio: { screen: EditMemberRatioScreen, },
     ExpenseDetail: { screen: ExpenseDetailScreen, },
   });
 

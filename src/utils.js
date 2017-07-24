@@ -10,7 +10,7 @@ class TextField extends Component {
   render() {
     const {
       name='', autoFocus=false, placeholder='', value='', keyboardType='default',
-      onBlur=this.prop,
+      onBlur=this.nop,
       updater,
     } = this.props;
 

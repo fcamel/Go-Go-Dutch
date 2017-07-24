@@ -58,7 +58,6 @@ export default class FileStore {
   };
 
   getTrips = () => {
-    console.log('XXX getTrips');
     this._check();
 
     let trips = [];
@@ -270,10 +269,8 @@ export default class FileStore {
   };
 
   _loadFromPersistentStore = () => {
-    console.log('XXX _loadFromPersistentStore');
     RNFS.exists(this._metaPath())
       .then((existed) => {
-        console.log('XXX meta existed', existed);
         if (!existed) {
           // The first time.
           let meta = {
@@ -283,7 +280,6 @@ export default class FileStore {
           };
           RNFS.writeFile(this._metaPath(), JSON.stringify(meta), 'utf8')
             .then(() => {
-              console.log('XXX writeFile');
               // Restart.
               this._loadFromPersistentStore();
             })
@@ -305,7 +301,6 @@ export default class FileStore {
         this._nextTripId = meta._nextTripId;
         this._nextMemberId = meta._nextMemberId;
         this._nextExpenseId = meta._nextExpenseId;
-        console.log('XXX meta', meta);
 
         let promises = [];
         for (let i = 1; i < this._nextTripId; i++) {
@@ -359,7 +354,6 @@ export default class FileStore {
       };
       RNFS.writeFile(this._metaPath(), JSON.stringify(meta), 'utf8')
         .then(() => {
-          console.log('XXX updateMeta');
           // Restart.
           this._loadFromPersistentStore();
         })
@@ -371,7 +365,6 @@ export default class FileStore {
     RNFS.writeFile(this._tripPath(tripId), JSON.stringify(this._store.trips[tripId]), 'utf8')
       .then(() => {
         // Do nothing.
-        console.log('XXX updateMeta');
       })
       .catch((error) => {
         alert(`ERROR: Failed to update trip ${tripId} (${error}).`);

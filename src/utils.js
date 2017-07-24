@@ -54,7 +54,6 @@ class DeleteConfirmDialog extends Component {
 function toEmptyOrNumericString(str)
 {
   let f = parseFloat(str);
-  console.log('XXX', str, f);
   if (!isNaN(f) && isFinite(f))
     return f.toString();
   return '';

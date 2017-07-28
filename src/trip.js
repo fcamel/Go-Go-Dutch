@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
+import MailCompose from 'react-native-mail-compose';
 import ModalWrapper from 'react-native-modal-wrapper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -166,7 +167,7 @@ class TripContentScreen extends Component {
     } else {
       headerRight = (
         <Button title='匯出 CSV' color={NAVIGATION_BUTTON_COLOR} onPress={() => {
-          // TODO: export CSV.
+          params.exportCSV();
         }}/>
       );
     }
@@ -188,7 +189,10 @@ class TripContentScreen extends Component {
 
   componentWillMount() {
     const { setParams } = this.props.navigation;
-    setParams({notifyExpensesUpdated: this.onExpensesUpdated});
+    setParams({
+      notifyExpensesUpdated: this.onExpensesUpdated,
+      exportCSV: this.exportCSV,
+    });
   }
 
   render() {
@@ -257,6 +261,29 @@ class TripContentScreen extends Component {
 
   setNotifyExpensesUpdated = (func) => {
     this.state.notifyExpensesUpdated = func;
+  };
+
+  exportCSV = () => {
+    this.sendMail();
+  };
+
+  async sendMail() {
+    try {
+      const { params } = this.props.navigation.state;
+      let content = this.store.exportFullAsCSV(params.tripId);
+      await MailCompose.send({
+        subject: params.title + '結算',
+        html: '請用 Google Spreadsheet / Excel 開啟附件',
+        attachments: [{
+          filename: 'summary',
+          ext: '.csv',
+          mimeType: 'text/csv',
+          text: content,
+        }],
+      });
+    } catch (e) {
+      alert('Failed to mail: e=' + e);
+    }
   }
 }
 

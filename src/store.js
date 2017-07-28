@@ -5,6 +5,20 @@ import RNFS from 'react-native-fs';
 
 let gTest = false;
 
+function runInTestMode() {
+  console.log('store: run in the test mode.');
+  gTest = true;
+}
+
+function toCSV(row) {
+  let out = [];
+  for (let i = 0; i < row.length; i++) {
+    let t = row[i].toString().replace(new RegExp('"', 'g'), '""');
+    out.push(`"${t}"`);
+  }
+  return out.join(',');
+}
+
 export default class FileStore {
   constructor() {
     this._initialized = false;
@@ -15,8 +29,8 @@ export default class FileStore {
     this._store.trips = {};
 
     if (gTest) {
-      this._fillDummyData();
       this._initialized = true;
+      this._fillDummyData();
     } else {
       this._tripPathPrefix = 'trip';
       this._loadFromPersistentStore();
@@ -220,6 +234,49 @@ export default class FileStore {
     return results;
   };
 
+  exportFullAsCSV = (tripId) => {
+    let lines = [];
+    let members = this.getMembers(tripId);
+    let expenses = this.getExpenses(tripId);
+
+    // Members' names
+    let row = ['', ''];
+    for (let i = 0 ; i < members.length; i++) {
+      row.push(members[i].name);
+      row.push('');
+      row.push('');
+    }
+    lines.push(toCSV(row));
+
+    // Header
+    row = ['', '費用'];
+    for (let i = 0 ; i < members.length; i++) {
+      row.push('應付', '已付', '差額');
+    }
+    lines.push(toCSV(row));
+
+    // Details of expenses
+    for (let i = 0 ; i < expenses.length; i++) {
+      let e = expenses[i];
+      row = [e.name, e.cost];
+      for (let i = 0 ; i < members.length; i++) {
+        let m = members[i];
+        let t = e.details[m.id];
+        if (t) {
+          row.push(t.shouldPay);
+          row.push(t.paid);
+          row.push(t.paid - t.shouldPay);
+        } else {
+          row.push('');
+          row.push('');
+          row.push('');
+        }
+      }
+      lines.push(toCSV(row));
+    }
+    return lines.join('\n') + '\n';
+  };
+
   //----------------------------------------------------------
   // Private API.
   //----------------------------------------------------------
@@ -371,3 +428,5 @@ export default class FileStore {
       });
   };
 }
+
+export { runInTestMode };

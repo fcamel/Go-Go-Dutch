@@ -1,28 +1,27 @@
 'use strict';
 
-
-import { Dimensions, StyleSheet, } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   baseView: {
     flex: 1,
-    backgroundColor: '#f5fcff',
+    backgroundColor: '#f5fcff'
   },
   contentText: {
-    fontSize: 16,
+    fontSize: 16
   },
   navigationHeaderTitle: {
-    color: '#fff',
+    color: '#fff'
   },
   navigationHeader: {
-    backgroundColor: '#007ab5',
+    backgroundColor: '#007ab5'
   },
   tableHeader: {
     fontSize: 14,
     color: '#959fa1',
     backgroundColor: '#d6e0e3',
     paddingTop: 6,
-    paddingBottom: 6,
+    paddingBottom: 6
   },
   tableData: {
     fontSize: 18,
@@ -30,10 +29,10 @@ export default StyleSheet.create({
     textAlignVertical: 'center',
     paddingLeft: 10,
     paddingTop: 5,
-    paddingBottom: 5,
+    paddingBottom: 5
   },
   tableDataNumber: {
-    fontSize: 18,
+    fontSize: 18
   },
   bottomMenuItem: {
     fontSize: 28,
@@ -43,8 +42,8 @@ export default StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ccc',
     // Use the max value to fix the orientation issue.
-    width: Math.max(Dimensions.get('window').width, Dimensions.get('window').height),
-  },
+    width: Math.max(Dimensions.get('window').width, Dimensions.get('window').height)
+  }
 });
 
 const NAVIGATION_BUTTON_COLOR = '#3295c2';

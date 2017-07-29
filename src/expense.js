@@ -10,7 +10,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 import ModalWrapper from 'react-native-modal-wrapper';
@@ -18,7 +18,6 @@ import SelectMultiple from 'react-native-select-multiple';
 
 import styles, { NAVIGATION_TINT_COLOR } from './styles';
 import { TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
-
 
 export default class ExpensesView extends Component {
   constructor() {
@@ -36,26 +35,35 @@ export default class ExpensesView extends Component {
     return (
       <View style={styles.baseView}>
         <FlatList
-          style={{flex: 1}}
+          style={{ flex: 1 }}
           data={this.props.store.getExpenses(this.props.tripId)}
           extraData={this.state.dataUpdateDetector}
-          ListHeaderComponent={
-            () =>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>消費名稱</Text>
-                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>金額</Text>
-                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>拆帳成員</Text>
-              </View>
-          }
-          renderItem={
-            ({item}) =>
-              <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
-                onPress={() => this.onClickExpense(item.id, item.name, item.cost, item.details)}>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
-                <Text style={[styles.tableData, styles.tableDataNumber, {flex: 1}]}>{item.cost}</Text>
-                <Text style={[styles.tableData, {flex: 1, fontSize: 16}]}>{item.members.join(', ')}</Text>
-              </TouchableOpacity>
-          }
+          ListHeaderComponent={() =>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>消費名稱</Text>
+              <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>金額</Text>
+              <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>拆帳成員</Text>
+            </View>}
+          renderItem={({ item }) =>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                borderBottomWidth: 1,
+                borderColor: '#ccc'
+              }}
+              onPress={() => this.onClickExpense(item.id, item.name, item.cost, item.details)}
+            >
+              <Text style={[styles.tableData, { flex: 1 }]}>
+                {item.name}
+              </Text>
+              <Text style={[styles.tableData, styles.tableDataNumber, { flex: 1 }]}>
+                {item.cost}
+              </Text>
+              <Text style={[styles.tableData, { flex: 1, fontSize: 16 }]}>
+                {item.members.join(', ')}
+              </Text>
+            </TouchableOpacity>}
         />
       </View>
     );
@@ -67,7 +75,7 @@ export default class ExpensesView extends Component {
 
   getInitialState() {
     return {
-      dataUpdateDetector: {},
+      dataUpdateDetector: {}
     };
   }
   resetState() {
@@ -90,14 +98,12 @@ export default class ExpensesView extends Component {
         memberId,
         name: this.props.store.getMemberName(this.props.tripId, memberId),
         paid: r.paid,
-        shouldPay: r.shouldPay,
+        shouldPay: r.shouldPay
       });
     }
     expenseDetails.sort(function(a, b) {
-      if (a.name < b.name)
-        return -1;
-      if (a.name > b.name)
-        return 1;
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
       return 0;
     });
 
@@ -111,27 +117,31 @@ export default class ExpensesView extends Component {
       deleteExpenseButtonVisible: true,
       editorVisible: false,
       deleteExpenseId: -1,
-      notifyDataUpdated: this.notifyDataUpdated,
+      notifyDataUpdated: this.notifyDataUpdated
     });
   }
 
   notifyDataUpdated = () => {
-    this.setState({dataUpdateDetector: {}});
+    this.setState({ dataUpdateDetector: {} });
   };
 }
 
-
 class AddExpenseScreen extends Component {
   static navigationOptions = ({ navigation }) => {
-    const {state } = navigation;
+    const { state } = navigation;
     return {
       title: state.params.title,
       headerTitleStyle: styles.navigationHeaderTitle,
       headerStyle: styles.navigationHeader,
       headerTintColor: NAVIGATION_TINT_COLOR,
       headerRight: (
-        <Button title='下一步' onPress={() => { state.params.onNext(); }}/>
-      ),
+        <Button
+          title="下一步"
+          onPress={() => {
+            state.params.onNext();
+          }}
+        />
+      )
     };
   };
 
@@ -143,42 +153,47 @@ class AddExpenseScreen extends Component {
 
   componentWillMount() {
     const { setParams } = this.props.navigation;
-    setParams({onNext: this.onNext});
+    setParams({ onNext: this.onNext });
   }
 
   render() {
     const { navigation } = this.props;
     const { params } = navigation.state;
 
-    let pickerMembers = params.store.getMembers(params.tripId).map( (m) => {
+    let pickerMembers = params.store.getMembers(params.tripId).map(m => {
       return <Picker.Item key={m.id} label={m.name} value={m.id} />;
     });
 
-    const members = params.store.getMembers(params.tripId).map( (m) => {
+    const members = params.store.getMembers(params.tripId).map(m => {
       return { label: m.name, value: m.id };
     });
     members.sort();
 
     return (
-      <ScrollView style={[styles.baseView, {paddingTop: 20, paddingLeft: 20}]}>
-        <Text style={{fontSize: 30, paddingBottom: 10}}>輸入消費資訊：</Text>
-        <View style={{paddingLeft: 10}}>
+      <ScrollView style={[styles.baseView, { paddingTop: 20, paddingLeft: 20 }]}>
+        <Text style={{ fontSize: 30, paddingBottom: 10 }}>輸入消費資訊：</Text>
+        <View style={{ paddingLeft: 10 }}>
           <TextField
             name={'名稱'}
             autoFocus={true}
             value={this.state.name.toString()}
-            updater={(name) => this.setState({name})}/>
+            updater={name => this.setState({ name })}
+          />
           <TextField
             name={'金額'}
             value={this.state.cost}
             keyboardType={'numeric'}
-            updater={(cost) => this.setState({cost: toEmptyOrNumericString(cost)})}/>
-          <View style={{flex: 1, flexDirection: 'row'}}>
-            <Text style={[styles.contentText, {width: 100, height: 50, paddingTop: 15}]}>付費者</Text>
+            updater={cost => this.setState({ cost: toEmptyOrNumericString(cost) })}
+          />
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            <Text style={[styles.contentText, { width: 100, height: 50, paddingTop: 15 }]}>
+              付費者
+            </Text>
             <Picker
-              style={{flex: 1}}
+              style={{ flex: 1 }}
               selectedValue={this.state.payer}
-              onValueChange={(value) => this.setState({payer: value})}>
+              onValueChange={value => this.setState({ payer: value })}
+            >
               <Picker.Item key={-1} label={'(多人付帳)'} value={-1} />
               {pickerMembers}
             </Picker>
@@ -186,13 +201,14 @@ class AddExpenseScreen extends Component {
           <View style={{}}>
             <Text style={styles.contentText}>拆帳成員</Text>
             <SelectMultiple
-              style={{height: 300}}
+              style={{ height: 300 }}
               labelStyle={styles.contentText}
-              rowStyle={[styles.baseView, {width: 300}]}
-              checkboxStyle={{width: 16, height: 16}}
+              rowStyle={[styles.baseView, { width: 300 }]}
+              checkboxStyle={{ width: 16, height: 16 }}
               items={members}
               selectedItems={this.state.selectedMembers}
-              onSelectionsChange={(selectedMembers) => this.setState({selectedMembers})} />
+              onSelectionsChange={selectedMembers => this.setState({ selectedMembers })}
+            />
           </View>
         </View>
       </ScrollView>
@@ -230,23 +246,27 @@ class AddExpenseScreen extends Component {
       selectedMembers: this.state.selectedMembers,
       notifyDataUpdated: params.notifyDataUpdated,
       // This is used to go back to TripContentScreen directly.
-      navigationBackKey: this.props.navigation.state.key,
+      navigationBackKey: this.props.navigation.state.key
     });
-  }
+  };
 }
-
 
 class EditMemberRatioScreen extends Component {
   static navigationOptions = ({ navigation }) => {
-    const {state } = navigation;
+    const { state } = navigation;
     return {
       title: state.params.title,
       headerTitleStyle: styles.navigationHeaderTitle,
       headerStyle: styles.navigationHeader,
       headerTintColor: NAVIGATION_TINT_COLOR,
       headerRight: (
-        <Button title='下一步' onPress={() => { state.params.onNext(); }}/>
-      ),
+        <Button
+          title="下一步"
+          onPress={() => {
+            state.params.onNext();
+          }}
+        />
+      )
     };
   };
 
@@ -259,7 +279,7 @@ class EditMemberRatioScreen extends Component {
   componentWillMount() {
     const { setParams, state } = this.props.navigation;
     const { params } = state;
-    setParams({onNext: this.onNext});
+    setParams({ onNext: this.onNext });
 
     let allMembersList = params.store.getMembers(params.tripId);
     let allMembers = {};
@@ -276,10 +296,8 @@ class EditMemberRatioScreen extends Component {
       this.state.selectedMembers.push(m);
     }
     this.state.selectedMembers.sort(function(a, b) {
-      if (a.name < b.name)
-        return -1;
-      if (a.name > b.name)
-        return 1;
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
       return 0;
     });
   }
@@ -287,42 +305,43 @@ class EditMemberRatioScreen extends Component {
   render() {
     let rows = this.state.selectedMembers.map((m, i) => {
       return (
-        <View style={{flexDirection: 'row'}} key={m.id}>
-          <Text style={[styles.contentText, {flex: 1, textAlignVertical: 'center', paddingLeft: 20}]}>{m.name}</Text>
+        <View style={{ flexDirection: 'row' }} key={m.id}>
+          <Text
+            style={[styles.contentText, { flex: 1, textAlignVertical: 'center', paddingLeft: 20 }]}
+          >
+            {m.name}
+          </Text>
           <TextInput
-            style={[styles.contentText, {flex: 1}]}
+            style={[styles.contentText, { flex: 1 }]}
             value={toEmptyOrNumericString(m.ratio)}
             keyboardType={'numeric'}
-            onBlur={
-              () => {
-                let f = parseFloat(m.ratio);
-                if (isNaN(f) || f < 0) {
-                  this.setState((previous) => {
-                    previous.selectedMembers[i].ratio = m.defaultRatio;
-                    return previous;
-                  });
-                }
-              }
-            }
-            onChangeText={
-              (ratio) => {
-                this.setState((previous) => {
-                  let f = parseFloat(ratio);
-                  previous.selectedMembers[i].ratio = isNaN(f) ? '' : f;
+            onBlur={() => {
+              let f = parseFloat(m.ratio);
+              if (isNaN(f) || f < 0) {
+                this.setState(previous => {
+                  previous.selectedMembers[i].ratio = m.defaultRatio;
                   return previous;
                 });
               }
-            } />
+            }}
+            onChangeText={ratio => {
+              this.setState(previous => {
+                let f = parseFloat(ratio);
+                previous.selectedMembers[i].ratio = isNaN(f) ? '' : f;
+                return previous;
+              });
+            }}
+          />
         </View>
       );
     });
 
     return (
-      <ScrollView style={styles.baseView, {paddingTop: 20}}>
-        <Text style={{fontSize: 30, paddingBottom: 10, paddingLeft: 20}}>設定拆帳比例：</Text>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>拆帳成員</Text>
-          <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>比例 (人數)</Text>
+      <ScrollView style={(styles.baseView, { paddingTop: 20 })}>
+        <Text style={{ fontSize: 30, paddingBottom: 10, paddingLeft: 20 }}>設定拆帳比例：</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>拆帳成員</Text>
+          <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>比例 (人數)</Text>
         </View>
         {rows}
       </ScrollView>
@@ -367,8 +386,7 @@ class EditMemberRatioScreen extends Component {
     for (let i = 0; i < members.length; i++) {
       let m = members[i];
       m.ratio = parseFloat(m.ratio);
-      if (isNaN(m.ratio))
-        m.ratio = m.defaultRatio;
+      if (isNaN(m.ratio)) m.ratio = m.defaultRatio;
       ratioTotal += m.ratio;
     }
 
@@ -381,15 +399,13 @@ class EditMemberRatioScreen extends Component {
         memberId,
         name: m.name,
         paid: memberId === payerId ? params.cost : 0,
-        shouldPay: params.cost * m.ratio / ratioTotal,
+        shouldPay: params.cost * m.ratio / ratioTotal
       });
     }
 
     expenseDetails.sort(function(a, b) {
-      if (a.name < b.name)
-        return -1;
-      if (a.name > b.name)
-        return 1;
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
       return 0;
     });
 
@@ -405,11 +421,10 @@ class EditMemberRatioScreen extends Component {
       deleteExpenseId: -1,
       notifyDataUpdated: params.notifyDataUpdated,
       // This is used to go back to TripContentScreen directly.
-      navigationBackKey: params.navigationBackKey,
+      navigationBackKey: params.navigationBackKey
     });
-  }
+  };
 }
-
 
 // Navigation flow:
 //
@@ -432,17 +447,29 @@ class ExpenseDetailScreen extends Component {
         headerStyle: styles.navigationHeader,
         headerTintColor: NAVIGATION_TINT_COLOR,
         headerRight: (
-          <View style={{width: 100, flexDirection: 'row', justifyContent: 'space-around'}}>
-            <Button title='刪除' onPress={() => {
-              setParams({deleteExpenseId: params.expenseId});
-            }} />
-            <Button title='完成' onPress={() => {
-              if (params.onEditingDone) {
-                params.onEditingDone();
-              }
-            }}/>
+          <View
+            style={{
+              width: 100,
+              flexDirection: 'row',
+              justifyContent: 'space-around'
+            }}
+          >
+            <Button
+              title="刪除"
+              onPress={() => {
+                setParams({ deleteExpenseId: params.expenseId });
+              }}
+            />
+            <Button
+              title="完成"
+              onPress={() => {
+                if (params.onEditingDone) {
+                  params.onEditingDone();
+                }
+              }}
+            />
           </View>
-        ),
+        )
       };
     } else {
       return {
@@ -451,12 +478,15 @@ class ExpenseDetailScreen extends Component {
         headerStyle: styles.navigationHeader,
         headerTintColor: NAVIGATION_TINT_COLOR,
         headerRight: (
-          <Button title='完成' onPress={() => {
-            if (params.onEditingDone) {
-              params.onEditingDone();
-            }
-          }}/>
-        ),
+          <Button
+            title="完成"
+            onPress={() => {
+              if (params.onEditingDone) {
+                params.onEditingDone();
+              }
+            }}
+          />
+        )
       };
     }
   };
@@ -470,8 +500,8 @@ class ExpenseDetailScreen extends Component {
   componentWillMount() {
     const { setParams } = this.props.navigation;
     const { params } = this.props.navigation.state;
-    setParams({onEditingDone: this.onEditingDone});
-    this.setState({expenseDetails: params.expenseDetails});
+    setParams({ onEditingDone: this.onEditingDone });
+    this.setState({ expenseDetails: params.expenseDetails });
   }
 
   componentDidMount() {
@@ -485,8 +515,11 @@ class ExpenseDetailScreen extends Component {
       <View style={styles.baseView}>
         <ModalWrapper
           style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
-          visible={params.editorVisible}>
-          <Text style={{fontSize: 24, paddingBottom: 24}}>{this.state.name}</Text>
+          visible={params.editorVisible}
+        >
+          <Text style={{ fontSize: 24, paddingBottom: 24 }}>
+            {this.state.name}
+          </Text>
           <View style={{}}>
             <TextField
               name={'應付'}
@@ -495,59 +528,100 @@ class ExpenseDetailScreen extends Component {
               keyboardType={'numeric'}
               onBlur={() => {
                 let f = parseFloat(this.state.shouldPay);
-                if (isNaN(f))
-                  this.setState({shouldPay: '0'});
+                if (isNaN(f)) this.setState({ shouldPay: '0' });
               }}
-              updater={(shouldPay) => this.setState({shouldPay: toEmptyOrNumericString(shouldPay)})}/>
+              updater={shouldPay => this.setState({ shouldPay: toEmptyOrNumericString(shouldPay) })}
+            />
             <TextField
               name={'已付'}
               value={this.state.paid}
               keyboardType={'numeric'}
               onBlur={() => {
                 let f = parseFloat(this.state.paid);
-                if (isNaN(f))
-                  this.setState({paid: '0'});
+                if (isNaN(f)) this.setState({ paid: '0' });
               }}
-              updater={(paid) => this.setState({paid: toEmptyOrNumericString(paid)})}/>
+              updater={paid => this.setState({ paid: toEmptyOrNumericString(paid) })}
+            />
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              paddingTop: 50
+            }}
+          >
             <Button title="確認" onPress={() => this.onEditingMemberExpenseDone(true)} />
             <Button title="取消" onPress={() => this.onEditingMemberExpenseDone(false)} />
           </View>
         </ModalWrapper>
         <DeleteConfirmDialog
           visible={params.deleteExpenseId > 0}
-          onRespond={this.onRespondDeleteExpense} />
+          onRespond={this.onRespondDeleteExpense}
+        />
 
-        <View style={{paddingLeft: 10, paddingTop: 15, paddingBottom: 15}}>
-          <Text style={{paddingBottom: 10, fontSize: 30, fontWeight: 'bold', color: '#00a1d1'}}>消費明細</Text>
-          <Text style={{fontSize: 12, color: '#777'}}>＊可點擊單列編輯金額</Text>
+        <View style={{ paddingLeft: 10, paddingTop: 15, paddingBottom: 15 }}>
+          <Text
+            style={{
+              paddingBottom: 10,
+              fontSize: 30,
+              fontWeight: 'bold',
+              color: '#00a1d1'
+            }}
+          >
+            消費明細
+          </Text>
+          <Text style={{ fontSize: 12, color: '#777' }}>＊可點擊單列編輯金額</Text>
           <WarningMessage
             shouldPayVisible={this.state.warningShouldPayVisible}
-            paidVisible={this.state.warningPaidVisible} />
+            paidVisible={this.state.warningPaidVisible}
+          />
         </View>
         <FlatList
-          style={{flex: 1}}
+          style={{ flex: 1 }}
           data={this.state.expenseDetails}
-          ListHeaderComponent={
-            () =>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={[styles.tableData, styles.tableHeader, {flex: 1}]}>成員</Text>
-                <Text style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, {flex: 1}]}>應付</Text>
-                <Text style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, {flex: 1}]}>已付</Text>
-                <Text style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, {flex: 1}]}>差額</Text>
-              </View>
-          }
-          renderItem={
-            ({item}) =>
-              <TouchableOpacity style={{flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc'}}
-                onPress={() => this.onClickExpenseMember(item.memberId, item.name, item.shouldPay, item.paid)}>
-                <Text style={[styles.tableData, {flex: 1}]}>{item.name}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{Number(item.shouldPay).toFixed(1)}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{Number(item.paid).toFixed(1)}</Text>
-                <Text style={[styles.tableData, {flex: 1}]}>{Number(item.paid - item.shouldPay).toFixed(1)}</Text>
-              </TouchableOpacity>
-          }
+          ListHeaderComponent={() =>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>成員</Text>
+              <Text
+                style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, { flex: 1 }]}
+              >
+                應付
+              </Text>
+              <Text
+                style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, { flex: 1 }]}
+              >
+                已付
+              </Text>
+              <Text
+                style={[styles.tableData, styles.tableDataNumber, styles.tableHeader, { flex: 1 }]}
+              >
+                差額
+              </Text>
+            </View>}
+          renderItem={({ item }) =>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                borderBottomWidth: 1,
+                borderColor: '#ccc'
+              }}
+              onPress={() =>
+                this.onClickExpenseMember(item.memberId, item.name, item.shouldPay, item.paid)}
+            >
+              <Text style={[styles.tableData, { flex: 1 }]}>
+                {item.name}
+              </Text>
+              <Text style={[styles.tableData, { flex: 1 }]}>
+                {Number(item.shouldPay).toFixed(1)}
+              </Text>
+              <Text style={[styles.tableData, { flex: 1 }]}>
+                {Number(item.paid).toFixed(1)}
+              </Text>
+              <Text style={[styles.tableData, { flex: 1 }]}>
+                {Number(item.paid - item.shouldPay).toFixed(1)}
+              </Text>
+            </TouchableOpacity>}
         />
       </View>
     );
@@ -558,8 +632,10 @@ class ExpenseDetailScreen extends Component {
   //--------------------------------------------------------------------
 
   getInitialState = () => {
-    let expenseDetails = this.props && this.props.navigation && this.props.navigation.state.params
-      ? this.props.navigation.state.params.expenseDetails : [];
+    let expenseDetails =
+      this.props && this.props.navigation && this.props.navigation.state.params
+        ? this.props.navigation.state.params.expenseDetails
+        : [];
     return {
       warningPaidVisible: false,
       warningShouldPayVisible: false,
@@ -568,13 +644,13 @@ class ExpenseDetailScreen extends Component {
       memberId: -1,
       name: '',
       shouldPay: '0',
-      paid: '0',
+      paid: '0'
     };
   };
 
   resetState = () => {
     this.setState(this.getInitialState());
-  }
+  };
 
   onClickExpenseMember(memberId, name, shouldPay, paid) {
     this.setState({
@@ -583,13 +659,13 @@ class ExpenseDetailScreen extends Component {
       shouldPay: toEmptyOrNumericString(shouldPay),
       paid: toEmptyOrNumericString(paid)
     });
-    this.props.navigation.setParams({editorVisible: true});
+    this.props.navigation.setParams({ editorVisible: true });
   }
 
-  onEditingMemberExpenseDone = (okay) => {
+  onEditingMemberExpenseDone = okay => {
     const { setParams } = this.props.navigation;
 
-    setParams({editorVisible: false});
+    setParams({ editorVisible: false });
 
     // Update numbers.
     if (okay) {
@@ -604,7 +680,7 @@ class ExpenseDetailScreen extends Component {
     }
 
     this.checkNumbers();
-  }
+  };
 
   checkNumbers = () => {
     // Check whether the input numbers are mismatched.
@@ -617,9 +693,11 @@ class ExpenseDetailScreen extends Component {
     }
     const epsilon = 1e-5;
     let cost = this.props.navigation.state.params.cost;
-    this.setState({warningShouldPayVisible: Math.abs(totalShouldPay - cost) > epsilon});
-    this.setState({warningPaidVisible: Math.abs(totalPaid - cost) > epsilon});
-  }
+    this.setState({
+      warningShouldPayVisible: Math.abs(totalShouldPay - cost) > epsilon
+    });
+    this.setState({ warningPaidVisible: Math.abs(totalPaid - cost) > epsilon });
+  };
 
   onEditingDone = () => {
     if (this.state.warningShouldPayVisible || this.state.warningPaidVisible) {
@@ -654,49 +732,47 @@ class ExpenseDetailScreen extends Component {
       params.notifyDataUpdated();
       goBack(params.navigationBackKey);
     }
-  }
+  };
 
-  onRespondDeleteExpense = (okay) => {
+  onRespondDeleteExpense = okay => {
     const { setParams, goBack } = this.props.navigation;
     const { params } = this.props.navigation.state;
 
-    setParams({deleteExpenseId: -1});
+    setParams({ deleteExpenseId: -1 });
     if (okay) {
       params.store.deleteExpense(params.tripId, params.deleteExpenseId);
       params.notifyDataUpdated();
       goBack();
     }
-  }
+  };
 }
 
-
-class WarningMessage extends Component
-{
+class WarningMessage extends Component {
   render() {
     if (!this.props.shouldPayVisible && !this.props.paidVisible) {
-      return ( <View /> );
+      return <View />;
     }
 
     if (this.props.shouldPayVisible && this.props.paidVisible) {
       return (
-        <View style={{paddingTop: 12}}>
-          <Text style={{fontSize: 12, color: '#f77'}}>應付總和不等於支出金額</Text>
-          <Text style={{fontSize: 12, color: '#f77'}}>已付總和不等於支出金額</Text>
+        <View style={{ paddingTop: 12 }}>
+          <Text style={{ fontSize: 12, color: '#f77' }}>應付總和不等於支出金額</Text>
+          <Text style={{ fontSize: 12, color: '#f77' }}>已付總和不等於支出金額</Text>
         </View>
       );
     }
 
     if (this.props.shouldPayVisible) {
       return (
-        <View style={{paddingTop: 12}}>
-          <Text style={{fontSize: 12, color: '#f77'}}>應付總和不等於支出金額</Text>
+        <View style={{ paddingTop: 12 }}>
+          <Text style={{ fontSize: 12, color: '#f77' }}>應付總和不等於支出金額</Text>
         </View>
       );
     }
 
     return (
-      <View style={{paddingTop: 12}}>
-        <Text style={{fontSize: 12, color: '#f77'}}>已付總和不等於支出金額</Text>
+      <View style={{ paddingTop: 12 }}>
+        <Text style={{ fontSize: 12, color: '#f77' }}>已付總和不等於支出金額</Text>
       </View>
     );
   }

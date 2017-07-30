@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Dimensions, View, Text, TextInput, TouchableHighlight } from 'react-native';
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import ModalWrapper from 'react-native-modal-wrapper';
 
 import styles from './styles';
@@ -36,6 +37,22 @@ class TextField extends Component {
   }
 
   nop = () => {};
+}
+
+class DeleteButton extends Component {
+  render() {
+    return (
+      <TouchableHighlight
+        onPress={() => {
+          this.props.onPress();
+        }}
+        underlayColor="#dfecf2"
+        style={styles.iconBtn}
+      >
+        <Icon name="delete" size={28} color="#9bafb8" />
+      </TouchableHighlight>
+    );
+  }
 }
 
 class DeleteConfirmDialog extends Component {
@@ -86,4 +103,4 @@ function toEmptyOrNumericString(str) {
   return '';
 }
 
-export { TextField, DeleteConfirmDialog, toEmptyOrNumericString };
+export { TextField, DeleteButton, DeleteConfirmDialog, toEmptyOrNumericString };

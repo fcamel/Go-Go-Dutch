@@ -23,7 +23,7 @@ import styles, { colors, navigationConsts } from './styles';
 import MembersView from './member';
 import ExpensesView from './expense';
 import SummaryView from './summary';
-import { DeleteConfirmDialog } from './utils';
+import { DeleteButton, DeleteConfirmDialog } from './utils';
 
 let gStore = new FileStore();
 
@@ -118,15 +118,11 @@ class TripListScreen extends Component {
                 >
                   <Icon name="edit" size={28} color="#9bafb8" />
                 </TouchableHighlight>
-                <TouchableHighlight
+                <DeleteButton
                   onPress={() => {
                     this.onDeleteTrip(item.id);
                   }}
-                  underlayColor="#dfecf2"
-                  style={styles.iconBtn}
-                >
-                  <Icon name="delete" size={28} color="#9bafb8" />
-                </TouchableHighlight>
+                />
               </View>
             </TouchableOpacity>}
         />

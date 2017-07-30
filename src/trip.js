@@ -1,15 +1,16 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { Button, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Button, Dimensions, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
 import MailCompose from 'react-native-mail-compose';
 import ModalWrapper from 'react-native-modal-wrapper';
+import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import FileStore from './store';
-import styles, { NAVIGATION_BUTTON_COLOR, NAVIGATION_TINT_COLOR, BUTTON_COLOR } from './styles';
+import styles, { colors, navigationConsts, NAVIGATION_BUTTON_COLOR, NAVIGATION_TINT_COLOR, BUTTON_COLOR } from './styles';
 import MembersView from './member';
 import ExpensesView from './expense';
 import SummaryView from './summary';
@@ -39,7 +40,7 @@ class TripListScreen extends Component {
     this.state = { id: -1, name: '', dataUpdateDetector: {} };
     this.store = gStore;
     this.store.setReadyCallback(() => {
-      console.log('XXX store is ready', this.store.isReady());
+      console.log('INFO: store is ready', this.store.isReady());
       this.setState({ dataUpdateDetector: {} });
     });
   }
@@ -154,18 +155,25 @@ class TripListScreen extends Component {
     let members = this.store.getMembers(id);
     let activeTab =
       !members || members.length <= 0
-        ? TripContentMainView.Tabs.Members
-        : TripContentMainView.Tabs.Expenses;
+        ? TripContentScreen.Tabs.Members
+        : TripContentScreen.Tabs.Expenses;
     this.props.navigation.navigate('Trip', { title: name, tripId: id, activeTab });
   };
 }
 
 class TripContentScreen extends Component {
+  // The value is the tab index.
+  static Tabs = {
+    Members: 0,
+    Expenses: 1,
+    Summary: 2
+  };
+
   static navigationOptions = ({ navigation }) => {
     const { state, setParams, navigate } = navigation;
     const { params } = state;
     let headerRight = {};
-    if (params.activeTab === TripContentMainView.Tabs.Members) {
+    if (params.activeTab === TripContentScreen.Tabs.Members) {
       headerRight = (
         <Button
           title="新增成員"
@@ -175,7 +183,7 @@ class TripContentScreen extends Component {
           }}
         />
       );
-    } else if (params.activeTab === TripContentMainView.Tabs.Expenses) {
+    } else if (params.activeTab === TripContentScreen.Tabs.Expenses) {
       headerRight = (
         <Button
           title="新增消費"
@@ -215,6 +223,7 @@ class TripContentScreen extends Component {
     super();
     this.store = gStore;
     this.state = { notifyExpensesUpdated: {} };
+    this.swiper = null;
   }
 
   componentWillMount() {
@@ -233,50 +242,66 @@ class TripContentScreen extends Component {
     let showEditor = visible => {
       this.props.navigation.setParams({ editorVisible: visible });
     };
+    let activeIconColor = colors.navigationBackground;
+    let barBackgroundColor = colors.base;
 
-    // NOTE: BottomNavigation doesn't occupy the height, so there is an empty View
-    // to occupy the same space; otherwise, BottomNavigation will cover the last row of data.
+    // NOTE:
+    // 1. BottomNavigation doesn't occupy the space.
+    // 2. Swiper uses fixed width/height to make it fullscreen. Need override the height manually.
     return (
       <View style={styles.baseView}>
-        <TripContentMainView
-          store={this.store}
-          navigation={this.props.navigation}
-          tripId={params.tripId}
-          activeTab={params.activeTab}
-          showEditor={showEditor}
-          setNotifyExpensesUpdated={this.setNotifyExpensesUpdated}
-          editorVisible={editorVisible}
-        />
-        <View style={{ height: 56 }} />
+        <Swiper
+          height={Dimensions.get('window').height - navigationConsts.height - 80}
+          loop={false}
+          showsPagination={false}
+          index={params.activeTab}
+          ref={(swiper) => { this.swiper = swiper; }}
+          onMomentumScrollEnd={this.onSwiperDidUpdateIndex}
+          onWillUpdateIndex={this.onSwiperWillUpdateIndex}
+        >
+          <MembersView
+            store={this.store}
+            navigation={this.props.navigation}
+            tripId={params.tripId}
+            showEditor={showEditor}
+            editorVisible={editorVisible}
+          />
+          <ExpensesView
+            store={this.store}
+            navigation={this.props.navigation}
+            tripId={params.tripId}
+            showEditor={showEditor}
+            editorVisible={editorVisible}
+            setNotifyExpensesUpdated={this.setNotifyExpensesUpdated}
+          />
+          <SummaryView store={this.store} tripId={params.tripId} />
+        </Swiper>
+      <View style={{ flex: 1, backgroundColor: 'black' }} />
         <BottomNavigation
           activeTab={params.activeTab}
-          labelColor="white"
-          rippleColor="white"
+          labelColor="black"
+          activeLabelColor='#007ab5'
+          rippleColor="black"
           style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
-          onTabChange={newTabIndex => {
-            if (newTabIndex === 0) {
-              this.props.navigation.setParams({ activeTab: TripContentMainView.Tabs.Members });
-            } else if (newTabIndex === 1) {
-              this.props.navigation.setParams({ activeTab: TripContentMainView.Tabs.Expenses });
-            } else {
-              this.props.navigation.setParams({ activeTab: TripContentMainView.Tabs.Summary });
-            }
-          }}
+          onTabChange={newTabIndex => { this.onTabChange(newTabIndex); }}
         >
           <Tab
             label="成員"
-            icon={<Icon name="people" size={20} color="#fff" />}
-            barBackgroundColor="#37474F"
+            icon={<Icon name="people" size={20} />}
+            activeIcon={<Icon name="people" size={20} color={activeIconColor} />}
+            barBackgroundColor={barBackgroundColor}
           />
           <Tab
             label="消費記錄"
-            icon={<Icon name="monetization-on" size={20} color="#fff" />}
-            barBackgroundColor="#37474F"
+            icon={<Icon name="monetization-on" size={20} />}
+            activeIcon={<Icon name="monetization-on" size={20} color={activeIconColor} />}
+            barBackgroundColor={barBackgroundColor}
           />
           <Tab
             label="結算"
-            icon={<Icon name="receipt" size={20} color="#fff" />}
-            barBackgroundColor="#37474F"
+            icon={<Icon name="receipt" size={20} />}
+            activeIcon={<Icon name="receipt" size={20} color={activeIconColor} />}
+            barBackgroundColor={barBackgroundColor}
           />
         </BottomNavigation>
       </View>
@@ -288,6 +313,24 @@ class TripContentScreen extends Component {
   //--------------------------------------------------------------------
   onExpensesUpdated = () => {
     this.state.notifyExpensesUpdated();
+  };
+
+  onTabChange = (index) => {
+    const { params } = this.props.navigation.state;
+
+    if (index != params.activeTab) {
+      this.swiper.scrollTo(index, true);
+      this.props.navigation.setParams({ activeTab: index });
+    }
+  };
+
+  onSwiperDidUpdateIndex = (e, state, context) => {
+    // NOTE: updating the active tab here is a little slow compared to
+    // do this in onSwiperWillUpdateIndex.
+  };
+
+  onSwiperWillUpdateIndex = (newIndex) => {
+    this.props.navigation.setParams({ activeTab: newIndex });
   };
 
   setNotifyExpensesUpdated = func => {
@@ -316,42 +359,6 @@ class TripContentScreen extends Component {
       });
     } catch (e) {
       alert('Failed to mail: e=' + e);
-    }
-  }
-}
-
-class TripContentMainView extends Component {
-  // The value is the tab index.
-  static Tabs = {
-    Members: 0,
-    Expenses: 1,
-    Summary: 2
-  };
-
-  render() {
-    if (this.props.activeTab === TripContentMainView.Tabs.Members) {
-      return (
-        <MembersView
-          store={this.props.store}
-          navigation={this.props.navigation}
-          tripId={this.props.tripId}
-          showEditor={this.props.showEditor}
-          editorVisible={this.props.editorVisible}
-        />
-      );
-    } else if (this.props.activeTab === TripContentMainView.Tabs.Expenses) {
-      return (
-        <ExpensesView
-          store={this.props.store}
-          navigation={this.props.navigation}
-          tripId={this.props.tripId}
-          showEditor={this.props.showEditor}
-          editorVisible={this.props.editorVisible}
-          setNotifyExpensesUpdated={this.props.setNotifyExpensesUpdated}
-        />
-      );
-    } else {
-      return <SummaryView store={this.props.store} tripId={this.props.tripId} />;
     }
   }
 }

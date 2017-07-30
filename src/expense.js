@@ -337,7 +337,7 @@ class EditMemberRatioScreen extends Component {
     });
 
     return (
-      <ScrollView style={(styles.baseView, { paddingTop: 20 })}>
+      <ScrollView style={[styles.baseView, { paddingTop: 20 }]}>
         <Text style={{ fontSize: 30, paddingBottom: 10, paddingLeft: 20 }}>設定拆帳比例：</Text>
         <View style={{ flexDirection: 'row' }}>
           <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>拆帳成員</Text>

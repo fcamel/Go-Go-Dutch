@@ -103,14 +103,7 @@ class TripListScreen extends Component {
               onPress={() => this.onClickTrip(item.id, item.name)}
             >
               <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                <Icon
-                  name="book"
-                  size={36}
-                  color="#007ab5"
-                  onPress={() => {
-                    this.onEditTrip(item.id, item.name);
-                  }}
-                />
+                <Icon name="book" size={36} color="#007ab5" />
                 <Text style={[styles.tableData, { color: '#007ab5', fontWeight: 'bold' }]}>
                   {item.name}
                 </Text>

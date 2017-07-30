@@ -6,7 +6,7 @@ import { Button, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import ModalWrapper from 'react-native-modal-wrapper';
 
 import styles, { BUTTON_COLOR } from './styles';
-import { TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
+import { TextField, DeleteButton, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
 
 export default class MembersView extends Component {
   constructor() {
@@ -68,15 +68,11 @@ export default class MembersView extends Component {
               <Text style={[styles.tableData, { flex: 1 }]}>
                 {item.name + ' (' + item.ratio + ')'}
               </Text>
-              <View style={{ margin: 8 }}>
-                <Button
-                  title="刪除"
-                  color={BUTTON_COLOR}
-                  onPress={() => {
-                    this.onDeleteMember(item.id);
-                  }}
-                />
-              </View>
+              <DeleteButton
+                onPress={() => {
+                  this.onDeleteMember(item.id);
+                }}
+              />
             </TouchableOpacity>}
         />
       </View>

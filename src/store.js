@@ -88,7 +88,14 @@ export default class FileStore {
 
     delete this._store.trips[id];
 
-    this._syncToPersistentStore(false, id);
+    RNFS.unlink(this._tripPath(id))
+      .then(() => {
+        // Do nothing.
+      })
+      // `unlink` will throw an error, if the item to unlink does not exist
+      .catch(error => {
+        alert(`ERROR: Failed to delete trip ${id} (${error}).`);
+      });
   };
 
   addMember = (tripId, name, ratio) => {

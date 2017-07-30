@@ -46,7 +46,7 @@ class DeleteConfirmDialog extends Component {
         visible={this.props.visible}
       >
         <TouchableOpacity onPress={() => this.props.onRespond(true)}>
-          <Text style={[styles.bottomMenuItem, { backgroundColor: '#f55' }]}>刪除</Text>
+          <Text style={[styles.bottomMenuItem, { color: '#e64133', fontWeight: 'bold' }]}>刪除</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => this.props.onRespond(false)}>
           <Text style={styles.bottomMenuItem}>取消</Text>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Dimensions, View, Text, TextInput, TouchableHighlight } from 'react-native';
 
 import ModalWrapper from 'react-native-modal-wrapper';
 
@@ -40,17 +40,41 @@ class TextField extends Component {
 
 class DeleteConfirmDialog extends Component {
   render() {
+    const buttonContainerStyle = {
+      borderRadius: 12,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: '#999',
+      backgroundColor: 'rgba(225, 225, 225, 1.0)',
+      width: Dimensions.get('window').width - 30
+    };
+    const buttonStyle = {
+      fontSize: 20,
+      textAlign: 'center',
+      textAlignVertical: 'center'
+    };
     return (
       <ModalWrapper
-        containerStyle={{ flexDirection: 'row', alignItems: 'flex-end' }}
+        containerStyle={{
+          flexDirection: 'row',
+          alignItems: 'flex-end',
+          backgroundColor: 'rgba(0, 0, 0, 0.1)'
+        }}
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.0)' }}
         visible={this.props.visible}
       >
-        <TouchableOpacity onPress={() => this.props.onRespond(true)}>
-          <Text style={[styles.bottomMenuItem, { color: '#e64133', fontWeight: 'bold' }]}>刪除</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.props.onRespond(false)}>
-          <Text style={styles.bottomMenuItem}>取消</Text>
-        </TouchableOpacity>
+        <TouchableHighlight
+          style={[buttonContainerStyle, { marginBottom: 6 }]}
+          onPress={() => this.props.onRespond(true)}
+        >
+          <Text style={[buttonStyle, { color: '#e64133', fontWeight: 'bold' }]}>刪除</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={[buttonContainerStyle, { marginBottom: 15 }]}
+          onPress={() => this.props.onRespond(false)}
+        >
+          <Text style={buttonStyle}>取消</Text>
+        </TouchableHighlight>
       </ModalWrapper>
     );
   }

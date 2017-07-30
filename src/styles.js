@@ -1,6 +1,6 @@
 'use strict';
 
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const colors = {
   base: '#f5fcff',
@@ -46,15 +46,6 @@ export default StyleSheet.create({
   },
   tableDataNumber: {
     fontSize: 18
-  },
-  bottomMenuItem: {
-    fontSize: 20,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    padding: 14,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    width: Dimensions.get('window').width
   },
   tripListItem: {
     flex: 1,

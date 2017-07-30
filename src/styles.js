@@ -54,8 +54,7 @@ export default StyleSheet.create({
     padding: 14,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    // Use the max value to fix the orientation issue.
-    width: Math.max(Dimensions.get('window').width, Dimensions.get('window').height)
+    width: Dimensions.get('window').width
   }
 });
 

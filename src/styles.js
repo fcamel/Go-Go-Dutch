@@ -42,9 +42,7 @@ export default StyleSheet.create({
     textAlignVertical: 'center',
     paddingLeft: 10,
     paddingTop: 5,
-    paddingBottom: 5,
-    color: '#007ab5',
-    fontWeight: 'bold'
+    paddingBottom: 5
   },
   tableDataNumber: {
     fontSize: 18

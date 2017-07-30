@@ -111,7 +111,7 @@ class TripListScreen extends Component {
                     this.onEditTrip(item.id, item.name);
                   }}
                 />
-                <Text style={styles.tableData}>
+                <Text style={[styles.tableData, { color: '#007ab5', fontWeight: 'bold' }]}>
                   {item.name}
                 </Text>
               </View>

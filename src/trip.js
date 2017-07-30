@@ -8,7 +8,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  TouchableHighlight
 } from 'react-native';
 
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
@@ -34,11 +35,13 @@ class TripListScreen extends Component {
       headerTitleStyle: styles.navigationHeaderTitle,
       headerStyle: styles.navigationHeader,
       headerRight: (
-        <Button
-          title="新增帳本"
-          color={navigationConsts.buttonColor}
+        <TouchableHighlight
+          underlayColor="#008bcc"
           onPress={() => setParams({ editTripVisible: true })}
-        />
+          style={[styles.iconBtn, styles.navIconBtn]}
+        >
+          <Icon name="add" size={30} color="#fff" />
+        </TouchableHighlight>
       )
     };
   };
@@ -60,57 +63,77 @@ class TripListScreen extends Component {
     return (
       <View style={styles.baseView}>
         <ModalWrapper
-          style={{ width: 280, height: 180, paddingLeft: 24, paddingRight: 24 }}
+          style={{ width: 280, height: 180, paddingLeft: 18, paddingRight: 18 }}
           visible={!!params.editTripVisible}
         >
-          <Text>出遊名稱</Text>
+          <Text>帳本名稱</Text>
           <TextInput
             autoFocus={true}
             defaultValue={this.state.name}
             placeholder="阿里山 2017/01"
+            placeholderTextColor="#bcbcbc"
             onChangeText={name => this.setState({ name })}
           />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-            <Button title="確認" onPress={() => this.onFinishEditTrip(true)} />
-            <Button title="取消" onPress={() => this.onFinishEditTrip(false)} />
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 6 }}>
+            <TouchableHighlight
+              onPress={() => this.onFinishEditTrip(false)}
+              style={styles.popupBtn}
+              underlayColor="#99d9f4"
+            >
+              <Text style={{ color: '#1e7d6a' }}>取消</Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() => this.onFinishEditTrip(true)}
+              style={styles.popupBtn}
+              underlayColor="#99d9f4"
+            >
+              <Text style={{ color: '#1e7d6a' }}>建立</Text>
+            </TouchableHighlight>
           </View>
         </ModalWrapper>
         <DeleteConfirmDialog visible={!!params.deleteTripId} onRespond={this.onRespondDelete} />
 
         <FlatList
-          style={{ flex: 1 }}
+          style={{ flex: 1, paddingTop: 3 }}
           data={this.store.isReady() ? this.store.getTrips() : []}
           extraData={this.state.dataUpdateDetector}
           renderItem={({ item }) =>
             <TouchableOpacity
-              style={{ flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#ccc' }}
+              style={styles.tripListItem}
               onPress={() => this.onClickTrip(item.id, item.name)}
             >
-              <Text style={[styles.tableData, { flex: 1 }]}>
-                {item.name}
-              </Text>
-              <View
-                style={{
-                  margin: 8,
-                  flexDirection: 'row',
-                  width: 100,
-                  justifyContent: 'space-around'
-                }}
-              >
-                <Button
-                  title="編輯"
-                  color={colors.button}
+              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                <Icon
+                  name="book"
+                  size={36}
+                  color="#007ab5"
                   onPress={() => {
                     this.onEditTrip(item.id, item.name);
                   }}
                 />
-                <Button
-                  title="刪除"
-                  color={colors.button}
+                <Text style={styles.tableData}>
+                  {item.name}
+                </Text>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.onEditTrip(item.id, item.name);
+                  }}
+                  underlayColor="#dfecf2"
+                  style={styles.iconBtn}
+                >
+                  <Icon name="edit" size={28} color="#9bafb8" />
+                </TouchableHighlight>
+                <TouchableHighlight
                   onPress={() => {
                     this.onDeleteTrip(item.id);
                   }}
-                />
+                  underlayColor="#dfecf2"
+                  style={styles.iconBtn}
+                >
+                  <Icon name="delete" size={28} color="#9bafb8" />
+                </TouchableHighlight>
               </View>
             </TouchableOpacity>}
         />

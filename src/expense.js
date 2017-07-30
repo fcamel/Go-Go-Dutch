@@ -16,7 +16,7 @@ import {
 import ModalWrapper from 'react-native-modal-wrapper';
 import SelectMultiple from 'react-native-select-multiple';
 
-import styles, { NAVIGATION_TINT_COLOR } from './styles';
+import styles, { navigationConsts } from './styles';
 import { TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
 
 export default class ExpensesView extends Component {
@@ -133,7 +133,7 @@ class AddExpenseScreen extends Component {
       title: state.params.title,
       headerTitleStyle: styles.navigationHeaderTitle,
       headerStyle: styles.navigationHeader,
-      headerTintColor: NAVIGATION_TINT_COLOR,
+      headerTintColor: navigationConsts.tintColor,
       headerRight: (
         <Button
           title="下一步"
@@ -258,7 +258,7 @@ class EditMemberRatioScreen extends Component {
       title: state.params.title,
       headerTitleStyle: styles.navigationHeaderTitle,
       headerStyle: styles.navigationHeader,
-      headerTintColor: NAVIGATION_TINT_COLOR,
+      headerTintColor: navigationConsts.tintColor,
       headerRight: (
         <Button
           title="下一步"
@@ -445,7 +445,7 @@ class ExpenseDetailScreen extends Component {
         title: title,
         headerTitleStyle: styles.navigationHeaderTitle,
         headerStyle: styles.navigationHeader,
-        headerTintColor: NAVIGATION_TINT_COLOR,
+        headerTintColor: navigationConsts.tintColor,
         headerRight: (
           <View
             style={{
@@ -476,7 +476,7 @@ class ExpenseDetailScreen extends Component {
         title: title,
         headerTitleStyle: styles.navigationHeaderTitle,
         headerStyle: styles.navigationHeader,
-        headerTintColor: NAVIGATION_TINT_COLOR,
+        headerTintColor: navigationConsts.tintColor,
         headerRight: (
           <Button
             title="完成"

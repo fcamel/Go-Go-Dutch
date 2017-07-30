@@ -10,7 +10,7 @@ import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import FileStore from './store';
-import styles, { colors, navigationConsts, NAVIGATION_BUTTON_COLOR, NAVIGATION_TINT_COLOR, BUTTON_COLOR } from './styles';
+import styles, { colors, navigationConsts } from './styles';
 import MembersView from './member';
 import ExpensesView from './expense';
 import SummaryView from './summary';
@@ -28,7 +28,7 @@ class TripListScreen extends Component {
       headerRight: (
         <Button
           title="新增帳本"
-          color={NAVIGATION_BUTTON_COLOR}
+          color={navigationConsts.buttonColor}
           onPress={() => setParams({ editTripVisible: true })}
         />
       )
@@ -91,14 +91,14 @@ class TripListScreen extends Component {
               >
                 <Button
                   title="編輯"
-                  color={BUTTON_COLOR}
+                  color={colors.button}
                   onPress={() => {
                     this.onEditTrip(item.id, item.name);
                   }}
                 />
                 <Button
                   title="刪除"
-                  color={BUTTON_COLOR}
+                  color={colors.button}
                   onPress={() => {
                     this.onDeleteTrip(item.id);
                   }}
@@ -177,7 +177,7 @@ class TripContentScreen extends Component {
       headerRight = (
         <Button
           title="新增成員"
-          color={NAVIGATION_BUTTON_COLOR}
+          color={navigationConsts.buttonColor}
           onPress={() => {
             setParams({ editorVisible: true });
           }}
@@ -187,7 +187,7 @@ class TripContentScreen extends Component {
       headerRight = (
         <Button
           title="新增消費"
-          color={NAVIGATION_BUTTON_COLOR}
+          color={navigationConsts.buttonColor}
           onPress={() => {
             navigate('AddExpense', {
               tripId: params.tripId,
@@ -202,7 +202,7 @@ class TripContentScreen extends Component {
       headerRight = (
         <Button
           title="匯出 CSV"
-          color={NAVIGATION_BUTTON_COLOR}
+          color={navigationConsts.buttonColor}
           onPress={() => {
             params.exportCSV();
           }}
@@ -214,7 +214,7 @@ class TripContentScreen extends Component {
       title: params.title,
       headerTitleStyle: styles.navigationHeaderTitle,
       headerStyle: styles.navigationHeader,
-      headerTintColor: NAVIGATION_TINT_COLOR,
+      headerTintColor: navigationConsts.tintColor,
       headerRight
     };
   };
@@ -242,7 +242,7 @@ class TripContentScreen extends Component {
     let showEditor = visible => {
       this.props.navigation.setParams({ editorVisible: visible });
     };
-    let activeIconColor = colors.navigationBackground;
+    let activeIconColor = navigationConsts.backgroundColor;
     let barBackgroundColor = colors.base;
 
     // NOTE:

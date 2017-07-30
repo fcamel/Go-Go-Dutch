@@ -4,16 +4,15 @@ import { Dimensions, StyleSheet } from 'react-native';
 
 const colors = {
   base: '#f5fcff',
-  navigationBackground: '#007ab5',
+  button: '#94bfe0',
 };
 
 const navigationConsts = {
   height: 60,
+  backgroundColor: '#007ab5',
+  buttonColor: '#3295c2',
+  tintColor: '#fff',
 };
-
-const NAVIGATION_BUTTON_COLOR = '#3295c2';
-const NAVIGATION_TINT_COLOR = '#fff';
-const BUTTON_COLOR = '#94bfe0';
 
 export default StyleSheet.create({
   baseView: {
@@ -27,7 +26,7 @@ export default StyleSheet.create({
     color: '#fff'
   },
   navigationHeader: {
-    backgroundColor: colors.navigationBackground,
+    backgroundColor: navigationConsts.backgroundColor,
     height: navigationConsts.height,
   },
   tableHeader: {
@@ -60,4 +59,4 @@ export default StyleSheet.create({
   }
 });
 
-export { colors, navigationConsts, NAVIGATION_BUTTON_COLOR, NAVIGATION_TINT_COLOR, BUTTON_COLOR };
+export { colors, navigationConsts };

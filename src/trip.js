@@ -1,7 +1,15 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { Button, Dimensions, FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Button,
+  Dimensions,
+  FlatList,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native';
 
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
 import MailCompose from 'react-native-mail-compose';
@@ -255,7 +263,9 @@ class TripContentScreen extends Component {
           loop={false}
           showsPagination={false}
           index={params.activeTab}
-          ref={(swiper) => { this.swiper = swiper; }}
+          ref={swiper => {
+            this.swiper = swiper;
+          }}
           onMomentumScrollEnd={this.onSwiperDidUpdateIndex}
           onWillUpdateIndex={this.onSwiperWillUpdateIndex}
         >
@@ -276,14 +286,16 @@ class TripContentScreen extends Component {
           />
           <SummaryView store={this.store} tripId={params.tripId} />
         </Swiper>
-      <View style={{ flex: 1, backgroundColor: 'black' }} />
+        <View style={{ flex: 1, backgroundColor: 'black' }} />
         <BottomNavigation
           activeTab={params.activeTab}
           labelColor="black"
-          activeLabelColor='#007ab5'
+          activeLabelColor="#007ab5"
           rippleColor="black"
           style={{ height: 56, elevation: 8, position: 'absolute', left: 0, bottom: 0, right: 0 }}
-          onTabChange={newTabIndex => { this.onTabChange(newTabIndex); }}
+          onTabChange={newTabIndex => {
+            this.onTabChange(newTabIndex);
+          }}
         >
           <Tab
             label="成員"
@@ -315,7 +327,7 @@ class TripContentScreen extends Component {
     this.state.notifyExpensesUpdated();
   };
 
-  onTabChange = (index) => {
+  onTabChange = index => {
     const { params } = this.props.navigation.state;
 
     if (index != params.activeTab) {
@@ -329,7 +341,7 @@ class TripContentScreen extends Component {
     // do this in onSwiperWillUpdateIndex.
   };
 
-  onSwiperWillUpdateIndex = (newIndex) => {
+  onSwiperWillUpdateIndex = newIndex => {
     this.props.navigation.setParams({ activeTab: newIndex });
   };
 

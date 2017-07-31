@@ -91,7 +91,11 @@ class TripListScreen extends Component {
             </TouchableHighlight>
           </View>
         </ModalWrapper>
-        <DeleteConfirmDialog visible={!!params.deleteTripId} onRespond={this.onRespondDelete} />
+        <DeleteConfirmDialog
+          visible={!!params.deleteTripId}
+          deleteButtonMessage="刪除帳本"
+          onRespond={this.onRespondDelete}
+        />
 
         <FlatList
           style={{ flex: 1, paddingTop: 3 }}

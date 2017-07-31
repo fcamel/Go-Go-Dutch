@@ -70,6 +70,8 @@ class DeleteConfirmDialog extends Component {
       textAlign: 'center',
       textAlignVertical: 'center'
     };
+    const { deleteButtonMessage = '刪除' } = this.props;
+
     return (
       <ModalWrapper
         containerStyle={{
@@ -84,7 +86,9 @@ class DeleteConfirmDialog extends Component {
           style={[buttonContainerStyle, { marginBottom: 6 }]}
           onPress={() => this.props.onRespond(true)}
         >
-          <Text style={[buttonStyle, { color: '#e64133', fontWeight: 'bold' }]}>刪除</Text>
+          <Text style={[buttonStyle, { color: '#e64133', fontWeight: 'bold' }]}>
+            {deleteButtonMessage}
+          </Text>
         </TouchableHighlight>
         <TouchableHighlight
           style={[buttonContainerStyle, { marginBottom: 15 }]}

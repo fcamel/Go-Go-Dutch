@@ -556,6 +556,7 @@ class ExpenseDetailScreen extends Component {
         </ModalWrapper>
         <DeleteConfirmDialog
           visible={params.deleteExpenseId > 0}
+          deleteButtonMessage="刪除記錄"
           onRespond={this.onRespondDeleteExpense}
         />
 

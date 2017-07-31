@@ -50,6 +50,7 @@ export default class MembersView extends Component {
         </ModalWrapper>
         <DeleteConfirmDialog
           visible={this.state.deleteMemberId > 0}
+          deleteButtonMessage="刪除成員"
           onRespond={this.onRespondDelete}
         />
 

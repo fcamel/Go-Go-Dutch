@@ -366,51 +366,104 @@ export default class FileStore {
         this._nextMemberId = meta._nextMemberId;
         this._nextExpenseId = meta._nextExpenseId;
 
-        let promises = [];
-        for (let i = 1; i < this._nextTripId; i++) {
-          let path = this._tripPath(i);
-          let p = RNFS.exists(path)
-            .then(existed => {
-              return existed ? path : '';
-            })
-            .then(path => {
-              if (path) {
-                return RNFS.readFile(path, 'utf8');
-              }
-              return '';
-            })
-            .then(content => {
-              if (content) {
-                this._store.trips[i] = JSON.parse(content);
-              }
-            })
-            .catch(error => {
-              alert(
-                `ERROR: _loadTripsFromPersistentStore: Failed to load trip id=${i} (${error}).`
-              );
-            });
-          promises.push(p);
-        }
+        if (this._nextTripId > 1) {
+          this._doLoadTripsFromPersistentStore();
+        } else {
+          this._initialized = true;
+          // Fill sample data.
+          this.addTrip('2017 Kyoto');
+          let trip = this.getTrips()[0];
+          // Fill members.
+          this.addMember(trip.id, 'Gru family', 5);
+          this.addMember(trip.id, 'Dave', 1);
+          this.addMember(trip.id, 'Stuart', 1);
+          this.addMember(trip.id, 'Kevin', 1);
+          this.addMember(trip.id, 'Tim', 1);
+          this.addMember(trip.id, 'Mark', 1);
+          this.addMember(trip.id, 'Bob', 1);
+          let ms = this.getMembers(trip.id);
+          // Fill expenses.
+          let members = {};
+          members[ms[0].id] = { paid: 11000, shouldPay: 5000 };
+          members[ms[1].id] = { paid: 0, shouldPay: 1000 };
+          members[ms[2].id] = { paid: 0, shouldPay: 1000 };
+          members[ms[3].id] = { paid: 0, shouldPay: 1000 };
+          members[ms[4].id] = { paid: 0, shouldPay: 1000 };
+          members[ms[5].id] = { paid: 0, shouldPay: 1000 };
+          members[ms[6].id] = { paid: 0, shouldPay: 1000 };
+          this.addExpense(trip.id, { name: 'hotel', cost: 11000, members });
+          members = {};
+          members[ms[2].id] = { paid: 0, shouldPay: 1000 };
+          members[ms[3].id] = { paid: 3000, shouldPay: 1000 };
+          members[ms[6].id] = { paid: 0, shouldPay: 1000 };
+          this.addExpense(trip.id, { name: 'foods', cost: 3000, members });
+          members = {};
+          members[ms[2].id] = { paid: 500, shouldPay: 200 };
+          members[ms[5].id] = { paid: 0, shouldPay: 300 };
+          this.addExpense(trip.id, { name: 'toys', cost: 500, members });
+          members = {};
+          members[ms[0].id] = { paid: 2000, shouldPay: 1500 };
+          members[ms[2].id] = { paid: 0, shouldPay: 500 };
+          members[ms[4].id] = { paid: 1000, shouldPay: 500 };
+          members[ms[6].id] = { paid: 0, shouldPay: 500 };
+          this.addExpense(trip.id, { name: 'rent car', cost: 3000, members });
 
-        Promise.all(promises)
-          .then(() => {
-            this._initialized = true;
-            if (this._readyCallback) {
-              try {
-                this._readyCallback();
-              } catch (error) {
-                alert(
-                  `ERROR: _loadTripsFromPersistentStore: Failed to run the ready callback (${error}).`
-                );
-              }
+          if (this._readyCallback) {
+            try {
+              this._readyCallback();
+            } catch (error) {
+              alert(
+                `ERROR: _loadTripsFromPersistentStore: Failed to run the ready callback (${error}).`
+              );
             }
-          })
-          .catch(error => {
-            alert(`ERROR: _loadTripsFromPersistentStore: Failed to load trips (${error}).`);
-          });
+          }
+        }
       })
       .catch(error => {
         alert(`ERROR: _loadTripsFromPersistentStore: Failed to load meta (${error}).`);
+      });
+  };
+
+  _doLoadTripsFromPersistentStore = () => {
+    let promises = [];
+    for (let i = 1; i < this._nextTripId; i++) {
+      let path = this._tripPath(i);
+      let p = RNFS.exists(path)
+        .then(existed => {
+          return existed ? path : '';
+        })
+        .then(path => {
+          if (path) {
+            return RNFS.readFile(path, 'utf8');
+          }
+          return '';
+        })
+        .then(content => {
+          if (content) {
+            this._store.trips[i] = JSON.parse(content);
+          }
+        })
+        .catch(error => {
+          alert(`ERROR: _loadTripsFromPersistentStore: Failed to load trip id=${i} (${error}).`);
+        });
+      promises.push(p);
+    }
+
+    Promise.all(promises)
+      .then(() => {
+        this._initialized = true;
+        if (this._readyCallback) {
+          try {
+            this._readyCallback();
+          } catch (error) {
+            alert(
+              `ERROR: _loadTripsFromPersistentStore: Failed to run the ready callback (${error}).`
+            );
+          }
+        }
+      })
+      .catch(error => {
+        alert(`ERROR: _loadTripsFromPersistentStore: Failed to load trips (${error}).`);
       });
   };
 

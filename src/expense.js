@@ -9,10 +9,12 @@ import {
   ScrollView,
   Text,
   TextInput,
+  TouchableHighlight,
   TouchableOpacity,
   View
 } from 'react-native';
 
+import IconMI from 'react-native-vector-icons/MaterialIcons';
 import ModalWrapper from 'react-native-modal-wrapper';
 import SelectMultiple from 'react-native-select-multiple';
 
@@ -135,8 +137,7 @@ class AddExpenseScreen extends Component {
       headerStyle: styles.navigationHeader,
       headerTintColor: navigationConsts.tintColor,
       headerRight: (
-        <Button
-          title="下一步"
+        <NextStepButton
           onPress={() => {
             state.params.onNext();
           }}
@@ -260,8 +261,7 @@ class EditMemberRatioScreen extends Component {
       headerStyle: styles.navigationHeader,
       headerTintColor: navigationConsts.tintColor,
       headerRight: (
-        <Button
-          title="下一步"
+        <NextStepButton
           onPress={() => {
             state.params.onNext();
           }}
@@ -454,14 +454,16 @@ class ExpenseDetailScreen extends Component {
               justifyContent: 'space-around'
             }}
           >
-            <Button
-              title="刪除"
+            <TouchableHighlight
+              underlayColor="#008bcc"
               onPress={() => {
                 setParams({ deleteExpenseId: params.expenseId });
               }}
-            />
-            <Button
-              title="完成"
+              style={[styles.iconBtn, styles.navIconBtn]}
+            >
+              <IconMI name="delete" size={30} color="#fff" />
+            </TouchableHighlight>
+            <DoneButton
               onPress={() => {
                 if (params.onEditingDone) {
                   params.onEditingDone();
@@ -478,8 +480,7 @@ class ExpenseDetailScreen extends Component {
         headerStyle: styles.navigationHeader,
         headerTintColor: navigationConsts.tintColor,
         headerRight: (
-          <Button
-            title="完成"
+          <DoneButton
             onPress={() => {
               if (params.onEditingDone) {
                 params.onEditingDone();
@@ -778,5 +779,29 @@ class WarningMessage extends Component {
     );
   }
 }
+
+const DoneButton = ({ onPress }) => {
+  return (
+    <TouchableHighlight
+      underlayColor="#008bcc"
+      onPress={onPress}
+      style={[styles.iconBtn, styles.navIconBtn]}
+    >
+      <IconMI name="done" size={30} color="#fff" />
+    </TouchableHighlight>
+  );
+};
+
+const NextStepButton = ({ onPress }) => {
+  return (
+    <TouchableHighlight
+      underlayColor="#008bcc"
+      onPress={onPress}
+      style={[styles.iconBtn, styles.navIconBtn]}
+    >
+      <IconMI name="forward" size={30} color="#fff" />
+    </TouchableHighlight>
+  );
+};
 
 export { AddExpenseScreen, EditMemberRatioScreen, ExpenseDetailScreen };

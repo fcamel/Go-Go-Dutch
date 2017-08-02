@@ -13,10 +13,11 @@ import {
 } from 'react-native';
 
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
+import IconMI from 'react-native-vector-icons/MaterialIcons';
+import IconMII from 'react-native-vector-icons/MaterialCommunityIcons';
 import MailCompose from 'react-native-mail-compose';
 import ModalWrapper from 'react-native-modal-wrapper';
 import Swiper from 'react-native-swiper';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import FileStore from './store';
 import styles, { colors, navigationConsts } from './styles';
@@ -40,7 +41,7 @@ class TripListScreen extends Component {
           onPress={() => setParams({ editTripVisible: true })}
           style={[styles.iconBtn, styles.navIconBtn]}
         >
-          <Icon name="add" size={30} color="#fff" />
+          <IconMI name="add" size={30} color="#fff" />
         </TouchableHighlight>
       )
     };
@@ -107,7 +108,7 @@ class TripListScreen extends Component {
               onPress={() => this.onClickTrip(item.id, item.name)}
             >
               <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                <Icon name="book" size={36} color="#007ab5" />
+                <IconMI name="book" size={36} color="#007ab5" />
                 <Text style={[styles.tableData, { color: '#007ab5', fontWeight: 'bold' }]}>
                   {item.name}
                 </Text>
@@ -120,7 +121,7 @@ class TripListScreen extends Component {
                   underlayColor="#dfecf2"
                   style={styles.iconBtn}
                 >
-                  <Icon name="edit" size={28} color="#9bafb8" />
+                  <IconMI name="edit" size={28} color="#9bafb8" />
                 </TouchableHighlight>
                 <DeleteButton
                   onPress={() => {
@@ -199,19 +200,20 @@ class TripContentScreen extends Component {
     let headerRight = {};
     if (params.activeTab === TripContentScreen.Tabs.Members) {
       headerRight = (
-        <Button
-          title="新增成員"
-          color={navigationConsts.buttonColor}
+        <TouchableHighlight
+          underlayColor="#008bcc"
           onPress={() => {
             setParams({ editorVisible: true });
           }}
-        />
+          style={[styles.iconBtn, styles.navIconBtn]}
+        >
+          <IconMI name="group-add" size={30} color="#fff" />
+        </TouchableHighlight>
       );
     } else if (params.activeTab === TripContentScreen.Tabs.Expenses) {
       headerRight = (
-        <Button
-          title="新增消費"
-          color={navigationConsts.buttonColor}
+        <TouchableHighlight
+          underlayColor="#008bcc"
           onPress={() => {
             navigate('AddExpense', {
               tripId: params.tripId,
@@ -220,17 +222,22 @@ class TripContentScreen extends Component {
               notifyDataUpdated: params.notifyExpensesUpdated
             });
           }}
-        />
+          style={[styles.iconBtn, styles.navIconBtn]}
+        >
+          <IconMI name="playlist-add" size={30} color="#fff" />
+        </TouchableHighlight>
       );
     } else {
       headerRight = (
-        <Button
-          title="匯出 CSV"
-          color={navigationConsts.buttonColor}
+        <TouchableHighlight
+          underlayColor="#008bcc"
           onPress={() => {
             params.exportCSV();
           }}
-        />
+          style={[styles.iconBtn, styles.navIconBtn]}
+        >
+          <IconMII name="file-export" size={30} color="#fff" />
+        </TouchableHighlight>
       );
     }
 
@@ -315,20 +322,20 @@ class TripContentScreen extends Component {
         >
           <Tab
             label="成員"
-            icon={<Icon name="people" size={20} />}
-            activeIcon={<Icon name="people" size={20} color={activeIconColor} />}
+            icon={<IconMI name="people" size={20} />}
+            activeIcon={<IconMI name="people" size={20} color={activeIconColor} />}
             barBackgroundColor={barBackgroundColor}
           />
           <Tab
             label="消費記錄"
-            icon={<Icon name="monetization-on" size={20} />}
-            activeIcon={<Icon name="monetization-on" size={20} color={activeIconColor} />}
+            icon={<IconMI name="monetization-on" size={20} />}
+            activeIcon={<IconMI name="monetization-on" size={20} color={activeIconColor} />}
             barBackgroundColor={barBackgroundColor}
           />
           <Tab
             label="結算"
-            icon={<Icon name="receipt" size={20} />}
-            activeIcon={<Icon name="receipt" size={20} color={activeIconColor} />}
+            icon={<IconMI name="receipt" size={20} />}
+            activeIcon={<IconMI name="receipt" size={20} color={activeIconColor} />}
             barBackgroundColor={barBackgroundColor}
           />
         </BottomNavigation>

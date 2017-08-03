@@ -413,14 +413,14 @@ export default class FileStore {
               this._readyCallback();
             } catch (error) {
               alert(
-                `ERROR: _loadTripsFromPersistentStore: Failed to run the ready callback (${error}).`
+                `ERROR: _loadTripsFromPersistentStore (1): Failed to run the ready callback (${error}).`
               );
             }
           }
         }
       })
       .catch(error => {
-        alert(`ERROR: _loadTripsFromPersistentStore: Failed to load meta (${error}).`);
+        alert(`ERROR: _loadTripsFromPersistentStore (2): Failed to load meta (${error}).`);
       });
   };
 
@@ -444,7 +444,9 @@ export default class FileStore {
           }
         })
         .catch(error => {
-          alert(`ERROR: _loadTripsFromPersistentStore: Failed to load trip id=${i} (${error}).`);
+          alert(
+            `ERROR: _loadTripsFromPersistentStore (3): Failed to load trip id=${i} (${error}).`
+          );
         });
       promises.push(p);
     }
@@ -457,13 +459,13 @@ export default class FileStore {
             this._readyCallback();
           } catch (error) {
             alert(
-              `ERROR: _loadTripsFromPersistentStore: Failed to run the ready callback (${error}).`
+              `ERROR: _loadTripsFromPersistentStore (4): Failed to run the ready callback (${error}).`
             );
           }
         }
       })
       .catch(error => {
-        alert(`ERROR: _loadTripsFromPersistentStore: Failed to load trips (${error}).`);
+        alert(`ERROR: _loadTripsFromPersistentStore (5): Failed to load trips (${error}).`);
       });
   };
 

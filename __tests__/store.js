@@ -5,6 +5,7 @@ runInTestMode();
 let gStore = new FileStore();
 
 test('export full expenses as a CSV', () => {
+  gStore.init();
   let expected = `\
 "","","三眼怪","","","吉吉","","","小小兵","",""
 "","費用","應付","已付","差額","應付","已付","差額","應付","已付","差額"

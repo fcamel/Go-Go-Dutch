@@ -51,7 +51,7 @@ class TripListScreen extends Component {
     super();
     this.state = { id: -1, name: '', dataUpdateDetector: {} };
     this.store = gStore;
-    this.store.setReadyCallback(() => {
+    this.store.init(() => {
       console.log('INFO: store is ready', this.store.isReady());
       this.setState({ dataUpdateDetector: {} });
     });

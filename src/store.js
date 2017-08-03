@@ -26,7 +26,13 @@ export default class FileStore {
     this._nextTripId = this._nextMemberId = this._nextExpenseId = 1;
     this._store = {};
     this._store.trips = {};
+  }
 
+  //----------------------------------------------------------
+  // Public API.
+  //----------------------------------------------------------
+  init = callback => {
+    this._readyCallback = callback;
     if (gTest) {
       this._initialized = true;
       this._fillDummyData();
@@ -34,13 +40,6 @@ export default class FileStore {
       this._tripPathPrefix = 'trip';
       this._loadFromPersistentStore();
     }
-  }
-
-  //----------------------------------------------------------
-  // Public API.
-  //----------------------------------------------------------
-  setReadyCallback = callback => {
-    this._readyCallback = callback;
   };
 
   isReady = () => {

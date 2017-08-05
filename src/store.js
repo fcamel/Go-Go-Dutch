@@ -123,6 +123,33 @@ export default class FileStore {
     this._syncToPersistentStore(false, tripId);
   };
 
+  getAllMembers = () => {
+    this._check();
+
+    let all = [];
+    for (let i = 0; i < this._nextTripId; i++) {
+      let members = this.getMembers(i);
+      for (let j = 0; j < members.length; j++) {
+        let m = members[j];
+        delete m.id;
+        delete m.key;
+        all.push(m);
+      }
+    }
+    all = SortUnique(all, function(a, b) {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      if (a.ratio < b.ratio) return -1;
+      if (a.ratio > b.ratio) return 1;
+      return 0;
+    });
+    for (let i = 0; i < all.length; i++) {
+      let m = all[i];
+      m.key = m.id = i + 1;
+    }
+    return all;
+  };
+
   getMembers = tripId => {
     this._check();
 
@@ -495,6 +522,19 @@ export default class FileStore {
         alert(`ERROR: Failed to update trip ${tripId} (${error}).`);
       });
   };
+}
+
+function SortUnique(data, comparator) {
+  if (data.length === 0) return data;
+
+  data = data.sort(comparator);
+  let result = [data[0]];
+  for (let i = 1; i < data.length; i++) {
+    if (comparator(data[i - 1], data[i]) != 0) {
+      result.push(data[i]);
+    }
+  }
+  return result;
 }
 
 export { runInTestMode };

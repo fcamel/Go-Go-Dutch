@@ -59,6 +59,8 @@ export default class FileStore {
     };
 
     this._syncToPersistentStore(true, id);
+
+    return id;
   };
 
   updateTrip = (id, name) => {

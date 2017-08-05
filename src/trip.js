@@ -17,6 +17,7 @@ import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconMII from 'react-native-vector-icons/MaterialCommunityIcons';
 import MailCompose from 'react-native-mail-compose';
 import ModalWrapper from 'react-native-modal-wrapper';
+import SelectMultiple from 'react-native-select-multiple';
 import Swiper from 'react-native-swiper';
 
 import FileStore from './store';
@@ -38,7 +39,11 @@ class TripListScreen extends Component {
       headerRight: (
         <TouchableHighlight
           underlayColor="#008bcc"
-          onPress={() => setParams({ editTripVisible: true })}
+          onPress={() =>
+            setParams({
+              editTripVisible: true,
+              newTrip: true
+            })}
           style={[styles.iconBtn, styles.navIconBtn]}
         >
           <IconMI name="add" size={30} color="#fff" />
@@ -49,7 +54,7 @@ class TripListScreen extends Component {
 
   constructor() {
     super();
-    this.state = { id: -1, name: '', dataUpdateDetector: {} };
+    this.state = { id: -1, name: '', dataUpdateDetector: {}, selectedMembers: [] };
     this.store = gStore;
     this.store.init(() => {
       console.log('INFO: store is ready', this.store.isReady());
@@ -61,12 +66,23 @@ class TripListScreen extends Component {
     // NOTE: params is undefined in the first call.
     const params = this.props.navigation.state.params ? this.props.navigation.state.params : {};
 
+    let members = [];
+    if (this.store.isReady()) {
+      members = this.store.getAllMembers().map((m, i) => {
+        return { label: `${m.name} (${m.ratio})`, value: i };
+      });
+    }
+
+    let modalStyle = {};
+    if (params.newTrip) {
+      modalStyle = { width: 280, height: 380, paddingLeft: 18, paddingRight: 18, paddingTop: 28 };
+    } else {
+      modalStyle = { width: 280, height: 180, paddingLeft: 18, paddingRight: 18 };
+    }
+
     return (
       <View style={styles.baseView}>
-        <ModalWrapper
-          style={{ width: 280, height: 180, paddingLeft: 18, paddingRight: 18 }}
-          visible={!!params.editTripVisible}
-        >
+        <ModalWrapper style={modalStyle} visible={!!params.editTripVisible}>
           <Text>帳本名稱</Text>
           <TextInput
             autoFocus={true}
@@ -75,6 +91,19 @@ class TripListScreen extends Component {
             placeholderTextColor="#bcbcbc"
             onChangeText={name => this.setState({ name })}
           />
+          {params.newTrip &&
+            <View style={{ paddingTop: 18 }}>
+              <Text>匯入既有成員</Text>
+              <SelectMultiple
+                style={{ height: 100, marginTop: 20 }}
+                labelStyle={styles.contentText}
+                rowStyle={[styles.baseView, { width: 250 }]}
+                checkboxStyle={{ width: 16, height: 16 }}
+                items={members}
+                selectedItems={this.state.selectedMembers}
+                onSelectionsChange={selectedMembers => this.setState({ selectedMembers })}
+              />
+            </View>}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 6 }}>
             <TouchableHighlight
               onPress={() => this.onFinishEditTrip(false)}
@@ -140,7 +169,10 @@ class TripListScreen extends Component {
   //--------------------------------------------------------------------
   onEditTrip(id, name) {
     this.setState({ id, name });
-    this.props.navigation.setParams({ editTripVisible: true });
+    this.props.navigation.setParams({
+      editTripVisible: true,
+      newTrip: false
+    });
   }
 
   onFinishEditTrip(done) {
@@ -156,12 +188,21 @@ class TripListScreen extends Component {
       if (this.state.id > 0) {
         this.store.updateTrip(this.state.id, this.state.name);
       } else {
-        this.store.addTrip(this.state.name);
+        let tripId = this.store.addTrip(this.state.name);
+        let members = this.store.getAllMembers().filter((m, i) => {
+          for (let selected of this.state.selectedMembers) {
+            if (selected.value == i) return true;
+          }
+          return false;
+        });
+        for (let m of members) {
+          this.store.addMember(tripId, m.name, m.ratio);
+        }
       }
     }
 
     this.props.navigation.setParams({ editTripVisible: false });
-    this.setState({ id: -1, name: '' });
+    this.setState({ id: -1, name: '', selectedMembers: [] });
   }
 
   onDeleteTrip = id => {

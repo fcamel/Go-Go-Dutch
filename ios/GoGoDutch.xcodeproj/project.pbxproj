@@ -22,6 +22,9 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		152EEAFD1F37100300F6C5C8 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152EEAFC1F37100300F6C5C8 /* File.swift */; };
+		152EEB271F3718C400F6C5C8 /* RNMailCompose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152EEB251F3718C400F6C5C8 /* RNMailCompose.swift */; };
+		152EEB281F3718C400F6C5C8 /* RNMailComposeBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 152EEB261F3718C400F6C5C8 /* RNMailComposeBridge.m */; };
 		15C5BD051F36FB3600B1E443 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 15C5BD041F36FB3600B1E443 /* Fonts */; };
 		28FA887133894B9886E74DA2 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A6EBD5A8A0347BD9151F636 /* FontAwesome.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -312,6 +315,11 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = GoGoDutch/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = GoGoDutch/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		152EEAFC1F37100300F6C5C8 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		152EEB1E1F37102500F6C5C8 /* GoGoDutch-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GoGoDutch-Bridging-Header.h"; sourceTree = "<group>"; };
+		152EEB241F3718C400F6C5C8 /* RNMailCompose-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RNMailCompose-Bridging-Header.h"; sourceTree = "<group>"; };
+		152EEB251F3718C400F6C5C8 /* RNMailCompose.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RNMailCompose.swift; sourceTree = "<group>"; };
+		152EEB261F3718C400F6C5C8 /* RNMailComposeBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNMailComposeBridge.m; sourceTree = "<group>"; };
 		15A57EC9AEEF4CE1B4001467 /* RNFS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFS.xcodeproj; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; };
 		15C5BD041F36FB3600B1E443 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
 		2C0F6740364A44F3B6D7A18D /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
@@ -498,6 +506,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		152EEB231F3718C400F6C5C8 /* RNMailCompose */ = {
+			isa = PBXGroup;
+			children = (
+				152EEB241F3718C400F6C5C8 /* RNMailCompose-Bridging-Header.h */,
+				152EEB251F3718C400F6C5C8 /* RNMailCompose.swift */,
+				152EEB261F3718C400F6C5C8 /* RNMailComposeBridge.m */,
+			);
+			name = RNMailCompose;
+			path = "../node_modules/react-native-mail-compose/ios/RNMailCompose";
+			sourceTree = "<group>";
+		};
 		15C5BCD71F36FAC100B1E443 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -565,6 +584,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				152EEB231F3718C400F6C5C8 /* RNMailCompose */,
+				152EEB1E1F37102500F6C5C8 /* GoGoDutch-Bridging-Header.h */,
+				152EEAFC1F37100300F6C5C8 /* File.swift */,
 				15C5BD041F36FB3600B1E443 /* Fonts */,
 				13B07FAE1A68108700A75B9A /* GoGoDutch */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -691,6 +713,9 @@
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
+					};
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 0800;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1094,8 +1119,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				152EEB281F3718C400F6C5C8 /* RNMailComposeBridge.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				152EEAFD1F37100300F6C5C8 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				152EEB271F3718C400F6C5C8 /* RNMailCompose.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1147,6 +1175,7 @@
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1177,6 +1206,7 @@
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1205,6 +1235,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1220,6 +1251,9 @@
 					"-lc++",
 				);
 				PRODUCT_NAME = GoGoDutch;
+				SWIFT_OBJC_BRIDGING_HEADER = "GoGoDutch-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1228,6 +1262,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1242,6 +1277,8 @@
 					"-lc++",
 				);
 				PRODUCT_NAME = GoGoDutch;
+				SWIFT_OBJC_BRIDGING_HEADER = "GoGoDutch-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

@@ -15,7 +15,7 @@ import {
 import BottomNavigation, { Tab } from 'react-native-material-bottom-navigation';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconMII from 'react-native-vector-icons/MaterialCommunityIcons';
-//import MailCompose from 'react-native-mail-compose';
+import MailCompose from 'react-native-mail-compose';
 import ModalWrapper from 'react-native-modal-wrapper';
 import SelectMultiple from 'react-native-select-multiple';
 import Swiper from 'react-native-swiper';
@@ -412,8 +412,6 @@ class TripContentScreen extends Component {
   };
 
   async sendMail() {
-    // TODO(fcamel): implement the feature "send mail".
-    /*
     try {
       const { params } = this.props.navigation.state;
       let content = this.store.exportFullAsCSV(params.tripId);
@@ -432,7 +430,6 @@ class TripContentScreen extends Component {
     } catch (e) {
       alert('Failed to mail: e=' + e);
     }
-  */
   }
 }
 

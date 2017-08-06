@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import {
-  Button,
   FlatList,
   Keyboard,
   Picker,
@@ -19,7 +18,7 @@ import ModalWrapper from 'react-native-modal-wrapper';
 import SelectMultiple from 'react-native-select-multiple';
 
 import styles, { navigationConsts } from './styles';
-import { TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
+import { MyButton, TextField, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
 
 export default class ExpensesView extends Component {
   constructor() {
@@ -515,7 +514,7 @@ class ExpenseDetailScreen extends Component {
     return (
       <View style={styles.baseView}>
         <ModalWrapper
-          style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
+          style={{ width: 320, height: 240, paddingLeft: 18, paddingRight: 18 }}
           visible={params.editorVisible}
         >
           <Text style={{ fontSize: 24, paddingBottom: 24 }}>
@@ -544,15 +543,9 @@ class ExpenseDetailScreen extends Component {
               updater={paid => this.setState({ paid: toEmptyOrNumericString(paid) })}
             />
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              paddingTop: 50
-            }}
-          >
-            <Button title="確認" onPress={() => this.onEditingMemberExpenseDone(true)} />
-            <Button title="取消" onPress={() => this.onEditingMemberExpenseDone(false)} />
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 6 }}>
+            <MyButton title="取消" onPress={() => this.onEditingMemberExpenseDone(false)} />
+            <MyButton title="確認" onPress={() => this.onEditingMemberExpenseDone(true)} />
           </View>
         </ModalWrapper>
         <DeleteConfirmDialog

@@ -1,12 +1,18 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { Button, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 import ModalWrapper from 'react-native-modal-wrapper';
 
 import styles, { BUTTON_COLOR } from './styles';
-import { TextField, DeleteButton, DeleteConfirmDialog, toEmptyOrNumericString } from './utils';
+import {
+  MyButton,
+  TextField,
+  DeleteButton,
+  DeleteConfirmDialog,
+  toEmptyOrNumericString
+} from './utils';
 
 export default class MembersView extends Component {
   constructor() {
@@ -18,10 +24,10 @@ export default class MembersView extends Component {
     return (
       <View style={styles.baseView}>
         <ModalWrapper
-          style={{ width: 280, height: 340, paddingLeft: 24, paddingRight: 24 }}
+          style={{ width: 320, height: 240, paddingLeft: 18, paddingRight: 18 }}
           visible={this.props.editorVisible}
         >
-          <Text style={{ fontSize: 30, paddingBottom: 10 }}>輸入成員資訊：</Text>
+          <Text style={{ fontSize: 20, paddingBottom: 10 }}>輸入成員資訊：</Text>
           <View style={{ paddingLeft: 10 }}>
             <TextField
               name={'名稱'}
@@ -42,9 +48,9 @@ export default class MembersView extends Component {
               }}
               updater={ratio => this.setState({ ratio: toEmptyOrNumericString(ratio) })}
             />
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50 }}>
-              <Button title="確認" onPress={this.onFinishEditMember} />
-              <Button title="取消" onPress={this.onCancelEditMember} />
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 6 }}>
+              <MyButton title="取消" onPress={this.onCancelEditMember} />
+              <MyButton title="確認" onPress={this.onFinishEditMember} />
             </View>
           </View>
         </ModalWrapper>

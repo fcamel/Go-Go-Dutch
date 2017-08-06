@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import {
-  Button,
   Dimensions,
   FlatList,
   Text,
@@ -25,7 +24,7 @@ import styles, { colors, navigationConsts } from './styles';
 import MembersView from './member';
 import ExpensesView from './expense';
 import SummaryView from './summary';
-import { DeleteButton, DeleteConfirmDialog } from './utils';
+import { MyButton, DeleteButton, DeleteConfirmDialog } from './utils';
 
 let gStore = new FileStore();
 
@@ -105,20 +104,8 @@ class TripListScreen extends Component {
               />
             </View>}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 6 }}>
-            <TouchableHighlight
-              onPress={() => this.onFinishEditTrip(false)}
-              style={styles.popupBtn}
-              underlayColor="#99d9f4"
-            >
-              <Text style={{ color: '#1e7d6a' }}>取消</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              onPress={() => this.onFinishEditTrip(true)}
-              style={styles.popupBtn}
-              underlayColor="#99d9f4"
-            >
-              <Text style={{ color: '#1e7d6a' }}>建立</Text>
-            </TouchableHighlight>
+            <MyButton title="取消" onPress={() => this.onFinishEditTrip(false)} />
+            <MyButton title="建立" onPress={() => this.onFinishEditTrip(true)} />
           </View>
         </ModalWrapper>
         <DeleteConfirmDialog

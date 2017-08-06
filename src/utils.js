@@ -101,10 +101,26 @@ class DeleteConfirmDialog extends Component {
   }
 }
 
+class MyButton extends Component {
+  render() {
+    return (
+      <TouchableHighlight
+        onPress={this.props.onPress}
+        style={styles.popupBtn}
+        underlayColor="#99d9f4"
+      >
+        <Text style={{ color: '#1e7d6a' }}>
+          {this.props.title}
+        </Text>
+      </TouchableHighlight>
+    );
+  }
+}
+
 function toEmptyOrNumericString(str) {
   let f = parseFloat(str);
   if (!isNaN(f) && isFinite(f)) return f.toString();
   return '';
 }
 
-export { TextField, DeleteButton, DeleteConfirmDialog, toEmptyOrNumericString };
+export { MyButton, TextField, DeleteButton, DeleteConfirmDialog, toEmptyOrNumericString };

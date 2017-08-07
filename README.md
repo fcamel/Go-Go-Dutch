@@ -1,5 +1,10 @@
 # Go-Go-Dutch
 
+Demo
+----
+![Example usage of Go-Go-Dutch](https://raw.githubusercontent.com/fcamel/screenshots/master/go-go-dutch/demo.gif)
+
+
 Coding Style
 ------------
 Use prettier to indent codes:
@@ -26,4 +31,4 @@ $ chmod +x .git/hooks/pre-commit
 Note
 ----
 * Tested on the Android emulator Nexus 5 and the real device LG v20.
-* Doesn't work on the iOS. Need to solve some third-party module issues.
+* Roughly tested on the iOS emulator.

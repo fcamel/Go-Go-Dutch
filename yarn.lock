@@ -3367,7 +3367,7 @@ react-native-fs@^2.3.3:
     base-64 "^0.1.0"
     utf8 "^2.1.1"
 
-"react-native-keyboard-spacer@github:miguelsm/react-native-keyboard-spacer#screen-height-prop":
+react-native-keyboard-spacer@miguelsm/react-native-keyboard-spacer#screen-height-prop:
   version "0.3.1"
   resolved "https://codeload.github.com/miguelsm/react-native-keyboard-spacer/tar.gz/de5c31f56fe64b52781f1f9aba41b619128b463c"
 
@@ -3388,6 +3388,10 @@ react-native-modal-wrapper@^2.3.0:
 react-native-select-multiple@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/react-native-select-multiple/-/react-native-select-multiple-1.0.4.tgz#05510e152631fd6dc1930b8605f66340f7c9c5b1"
+
+"react-native-swiper@https://github.com/fcamel/react-native-swiper.git":
+  version "1.5.4"
+  resolved "https://github.com/fcamel/react-native-swiper.git#51dea019777beefd81e7eff50b0feee502739a1e"
 
 react-native-tab-view@^0.0.67:
   version "0.0.67"

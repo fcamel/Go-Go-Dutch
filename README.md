@@ -31,4 +31,4 @@ $ chmod +x .git/hooks/pre-commit
 Note
 ----
 * Tested on the Android emulator Nexus 5 and the real device LG v20.
-* Roughly tested on the iOS emulator.
+* Roughly tested on the iOS emulator and iPhone 7. You may need to set the Development Team. I use a custom path variable DEVELOPMENT_TEAM as the value. Reference https://stackoverflow.com/a/40424891/278456

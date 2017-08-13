@@ -286,9 +286,12 @@ export default class FileStore {
     lines.push(toCSV(row));
 
     // Header
+    let sum = [];
+    let totalCost = 0;
     row = ['', '費用'];
     for (let i = 0; i < members.length; i++) {
       row.push('應付', '已付', '差額');
+      sum.push(0, 0, 0);
     }
     lines.push(toCSV(row));
 
@@ -296,6 +299,7 @@ export default class FileStore {
     for (let i = 0; i < expenses.length; i++) {
       let e = expenses[i];
       row = [e.name, e.cost];
+      totalCost += e.cost;
       for (let i = 0; i < members.length; i++) {
         let m = members[i];
         let t = e.details[m.id];
@@ -303,6 +307,9 @@ export default class FileStore {
           row.push(t.shouldPay);
           row.push(t.paid);
           row.push(t.paid - t.shouldPay);
+          sum[i * 3] += t.shouldPay;
+          sum[i * 3 + 1] += t.paid;
+          sum[i * 3 + 2] += t.paid - t.shouldPay;
         } else {
           row.push('');
           row.push('');
@@ -311,6 +318,17 @@ export default class FileStore {
       }
       lines.push(toCSV(row));
     }
+
+    // Append an separated row.
+    row = ['', ''];
+    for (let i = 0; i < members.length; i++) {
+      row.push('', '', '');
+    }
+    lines.push(toCSV(row));
+
+    // Append the sum.
+    lines.push(toCSV(['', totalCost].concat(sum)));
+
     return lines.join('\n') + '\n';
   };
 

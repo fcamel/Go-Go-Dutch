@@ -382,8 +382,6 @@ class TripContentScreen extends Component {
   onTabChange = index => {
     const { params } = this.props.navigation.state;
 
-    console.log(`OOOOO onTabChange: params.activeTab=${params.activeTab}, new index=${index}`);
-
     if (index != params.activeTab) {
       if (Platform.OS === 'android') {
         // Show the scroll animation, too.

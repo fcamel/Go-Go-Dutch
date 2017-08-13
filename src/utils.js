@@ -117,10 +117,30 @@ class MyButton extends Component {
   }
 }
 
-function toEmptyOrNumericString(str) {
+function toEmptyOrNumericString(value) {
+  const str = value.toString();
   let f = parseFloat(str);
-  if (!isNaN(f) && isFinite(f)) return f.toString();
-  return '';
+  if (isNaN(f) || !isFinite(f)) {
+    return '';
+  }
+  let result = [];
+  let foundPeriod = false;
+  let haveSeenNonZero = false;
+  for (let i = 0; i < str.length; i++) {
+    if ((str[i] >= '0' && str[i] <= '9') || str[i] == '.') {
+      if (str[i] == '.') {
+        if (foundPeriod) {
+          // Invalid number. Skip the rest.
+          break;
+        }
+        foundPeriod = true;
+      }
+      if (!haveSeenNonZero && str[i] == '0') continue;
+      haveSeenNonZero = true;
+      result.push(str[i]);
+    }
+  }
+  return result.join('');
 }
 
 export { MyButton, TextField, DeleteButton, DeleteConfirmDialog, toEmptyOrNumericString };

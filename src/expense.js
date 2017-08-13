@@ -167,7 +167,6 @@ class AddExpenseScreen extends Component {
     const members = params.store.getMembers(params.tripId).map(m => {
       return { label: m.name, value: m.id };
     });
-    members.sort();
 
     return (
       <ScrollView style={[styles.baseView, { paddingTop: 20, paddingLeft: 20 }]}>
@@ -192,7 +191,31 @@ class AddExpenseScreen extends Component {
             <Picker
               style={{ flex: 1 }}
               selectedValue={this.state.payer}
-              onValueChange={value => this.setState({ payer: value })}
+              onValueChange={value => {
+                // Also add the payer to the selected members automatically.
+                let payer = null;
+                for (let m of members) {
+                  if (m.value === value) {
+                    payer = m;
+                    break;
+                  }
+                }
+
+                if (payer !== null) {
+                  let payerIsSelected = false;
+                  for (let m of this.state.selectedMembers) {
+                    if (m.value === payer.value) {
+                      payerIsSelected = true;
+                      break;
+                    }
+                  }
+                  if (!payerIsSelected) {
+                    this.state.selectedMembers.push(payer);
+                  }
+                }
+
+                this.setState({ payer: value, selectedMembers: this.state.selectedMembers });
+              }}
             >
               <Picker.Item key={-1} label={'(多人付帳)'} value={-1} />
               {pickerMembers}

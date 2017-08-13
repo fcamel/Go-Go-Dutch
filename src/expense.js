@@ -578,8 +578,8 @@ class ExpenseDetailScreen extends Component {
         />
 
         <View style={{ paddingLeft: 10, paddingTop: 15, paddingBottom: 15 }}>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={{ flex: 7 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ flex: 6 }}>
               <Text
                 style={{
                   paddingBottom: 10,
@@ -596,19 +596,26 @@ class ExpenseDetailScreen extends Component {
                 paidVisible={this.state.warningPaidVisible}
               />
             </View>
-            <View style={{ flex: 3, flexDirection: 'row', alignItems: 'flex-end' }}>
+            <View
+              style={{
+                flex: 4,
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                alignItems: 'flex-end'
+              }}
+            >
               <TouchableHighlight
                 underlayColor="#008bcc"
                 onPress={() => {
                   this.onClickResetPaid();
                 }}
                 style={{
-                  paddingLeft: 12,
-                  paddingRight: 12,
+                  paddingLeft: 10,
+                  paddingRight: 10,
                   paddingTop: 5,
                   paddingBottom: 5,
                   borderRadius: 8,
-                  marginRight: 8,
+                  marginRight: 6,
                   justifyContent: 'center',
                   alignItems: 'center',
                   backgroundColor: '#90aeb5'

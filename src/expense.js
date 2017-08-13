@@ -578,21 +578,46 @@ class ExpenseDetailScreen extends Component {
         />
 
         <View style={{ paddingLeft: 10, paddingTop: 15, paddingBottom: 15 }}>
-          <Text
-            style={{
-              paddingBottom: 10,
-              fontSize: 30,
-              fontWeight: 'bold',
-              color: '#00a1d1'
-            }}
-          >
-            消費明細
-          </Text>
-          <Text style={{ fontSize: 12, color: '#777' }}>＊可點擊單列編輯金額</Text>
-          <WarningMessage
-            shouldPayVisible={this.state.warningShouldPayVisible}
-            paidVisible={this.state.warningPaidVisible}
-          />
+          <View style={{ flexDirection: 'row' }}>
+            <View style={{ flex: 7 }}>
+              <Text
+                style={{
+                  paddingBottom: 10,
+                  fontSize: 30,
+                  fontWeight: 'bold',
+                  color: '#00a1d1'
+                }}
+              >
+                消費明細
+              </Text>
+              <Text style={{ fontSize: 12, color: '#777' }}>＊可點擊單列編輯金額</Text>
+              <WarningMessage
+                shouldPayVisible={this.state.warningShouldPayVisible}
+                paidVisible={this.state.warningPaidVisible}
+              />
+            </View>
+            <View style={{ flex: 3, flexDirection: 'row', alignItems: 'flex-end' }}>
+              <TouchableHighlight
+                underlayColor="#008bcc"
+                onPress={() => {
+                  this.onClickResetPaid();
+                }}
+                style={{
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  paddingTop: 5,
+                  paddingBottom: 5,
+                  borderRadius: 8,
+                  marginRight: 8,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#90aeb5'
+                }}
+              >
+                <Text style={{ color: '#fff' }}>應付金額歸零</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
         </View>
         <FlatList
           style={{ flex: 1 }}
@@ -762,6 +787,15 @@ class ExpenseDetailScreen extends Component {
       params.notifyDataUpdated();
       goBack();
     }
+  };
+
+  onClickResetPaid = () => {
+    let expenseDetails = this.state.expenseDetails;
+    for (let e of expenseDetails) {
+      e.shouldPay = 0;
+    }
+    let warningShouldPayVisible = this.props.navigation.state.params.cost !== 0;
+    this.setState({ expenseDetails, warningShouldPayVisible });
   };
 }
 

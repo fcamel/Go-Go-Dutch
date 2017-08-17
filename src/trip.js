@@ -172,7 +172,12 @@ class TripListScreen extends Component {
       return;
     }
 
-    if (done && this.state.name.length > 0) {
+    if (done) {
+      if (this.state.name.length === 0) {
+        alert('請輸入名稱');
+        return;
+      }
+
       if (this.state.id > 0) {
         this.store.updateTrip(this.state.id, this.state.name);
       } else {

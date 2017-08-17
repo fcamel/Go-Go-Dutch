@@ -32,3 +32,11 @@ Note
 ----
 * Tested on the Android emulator Nexus 5 and the real device LG v20.
 * Roughly tested on the iOS emulator and iPhone 7. You may need to set the Development Team. I use a custom path variable DEVELOPMENT_TEAM as the value. Reference https://stackoverflow.com/a/40424891/278456
+
+
+Misc Issue
+----------
+
+iOS
+* "config.h not found in mutex.h": See https://github.com/facebook/react-native/issues/14382#issuecomment-313163119
+* "error: Can't find 'node' binary to build React Native bundle": See https://stackoverflow.com/a/44494828/278456

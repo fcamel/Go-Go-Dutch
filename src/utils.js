@@ -123,11 +123,11 @@ function toEmptyOrNumericString(value) {
   if (isNaN(f) || !isFinite(f)) {
     return '';
   }
+
   let result = [];
   let foundPeriod = false;
-  let haveSeenNonZero = false;
   for (let i = 0; i < str.length; i++) {
-    if ((str[i] >= '0' && str[i] <= '9') || str[i] == '.') {
+    if ((str[i] >= '0' && str[i] <= '9') || str[i] === '.') {
       if (str[i] == '.') {
         if (foundPeriod) {
           // Invalid number. Skip the rest.
@@ -135,11 +135,14 @@ function toEmptyOrNumericString(value) {
         }
         foundPeriod = true;
       }
-      if (!haveSeenNonZero && str[i] == '0') continue;
-      haveSeenNonZero = true;
+      if (result.length === 1 && result[0] === '0') {
+        if (str[i] === '0') continue;
+        if (str[i] !== '.') result = [];
+      }
       result.push(str[i]);
     }
   }
+
   return result.join('');
 }
 

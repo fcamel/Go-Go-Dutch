@@ -338,8 +338,8 @@ class EditMemberRatioScreen extends Component {
             value={toEmptyOrNumericString(m.ratio)}
             keyboardType={'numeric'}
             onBlur={() => {
-              let f = parseFloat(m.ratio);
-              if (isNaN(f) || f < 0) {
+              let f = toEmptyOrNumericString(m.ratio);
+              if (f === '') {
                 this.setState(previous => {
                   previous.selectedMembers[i].ratio = m.defaultRatio;
                   return previous;
@@ -348,8 +348,7 @@ class EditMemberRatioScreen extends Component {
             }}
             onChangeText={ratio => {
               this.setState(previous => {
-                let f = parseFloat(ratio);
-                previous.selectedMembers[i].ratio = isNaN(f) ? '' : f;
+                previous.selectedMembers[i].ratio = toEmptyOrNumericString(ratio);
                 return previous;
               });
             }}
@@ -363,7 +362,7 @@ class EditMemberRatioScreen extends Component {
         <Text style={{ fontSize: 30, paddingBottom: 10, paddingLeft: 20 }}>設定拆帳比例：</Text>
         <View style={{ flexDirection: 'row' }}>
           <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>拆帳成員</Text>
-          <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>比例 (人數)</Text>
+          <Text style={[styles.tableData, styles.tableHeader, { flex: 1 }]}>人數</Text>
         </View>
         {rows}
       </ScrollView>

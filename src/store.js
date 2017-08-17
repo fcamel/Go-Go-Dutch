@@ -417,7 +417,7 @@ export default class FileStore {
         } else {
           this._initialized = true;
           // Fill sample data.
-          this.addTrip('2017 Kyoto');
+          this.addTrip('2017 Kyoto (sample)');
           let trip = this.getTrips()[0];
           // Fill members.
           this.addMember(trip.id, 'Gru family', 5);

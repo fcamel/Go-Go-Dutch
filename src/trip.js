@@ -95,7 +95,7 @@ class TripListScreen extends Component {
             <View style={{ paddingTop: 18 }}>
               <Text>匯入既有成員</Text>
               <SelectMultiple
-                style={{ height: 100, marginTop: 20 }}
+                style={{ height: 175, marginTop: 20 }}
                 labelStyle={styles.contentText}
                 rowStyle={[styles.baseView, { width: 250 }]}
                 checkboxStyle={{ width: 16, height: 16 }}
